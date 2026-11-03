@@ -1,0 +1,1673 @@
+{
+  "info": {
+    "name": "publicrecords Apify Actors (Etsy, sports odds, jobs, government data)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "description": "Call the publicrecords Actors on Apify with your own Apify API token. Set the collection variable apifyToken (keep it as a secret / current value only; never commit it)."
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{apifyToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "https://api.apify.com/v2"
+    },
+    {
+      "key": "apifyToken",
+      "value": "",
+      "type": "secret"
+    },
+    {
+      "key": "runId",
+      "value": ""
+    },
+    {
+      "key": "datasetId",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "Etsy Scraper \u2014 Listings, Prices & Best Sellers",
+      "description": "Scrape Etsy search results by keyword, category or market page: title, price, rating, reviews, Bestseller and Star Seller badges, ad flag and search rank.\n\nStore page: https://apify.com/publicrecords/etsy-search-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~etsy-search-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~etsy-search-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"queries\": [\n    \"ceramic mug\"\n  ],\n  \"maxPages\": 1,\n  \"proxyConfiguration\": {\n    \"useApifyProxy\": true,\n    \"apifyProxyGroups\": [\n      \"RESIDENTIAL\"\n    ],\n    \"apifyProxyCountry\": \"US\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~etsy-search-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~etsy-search-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"queries\": [\n    \"ceramic mug\"\n  ],\n  \"maxPages\": 1,\n  \"proxyConfiguration\": {\n    \"useApifyProxy\": true,\n    \"apifyProxyGroups\": [\n      \"RESIDENTIAL\"\n    ],\n    \"apifyProxyCountry\": \"US\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Etsy Shop Sales Tracker & Scraper",
+      "description": "Track Etsy shop sales counters with this Etsy shop scraper: measured sales counts with the date each was read. One row per shop, pay per shop.\n\nStore page: https://apify.com/publicrecords/etsy-shop-velocity",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~etsy-shop-velocity/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~etsy-shop-velocity",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shops\": [\n    \"OrelCeramics\",\n    \"Bestickend\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~etsy-shop-velocity/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~etsy-shop-velocity",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"shops\": [\n    \"OrelCeramics\",\n    \"Bestickend\"\n  ]\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Legistar City Council Minutes & Agendas: meetings, items",
+      "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.\n\nStore page: https://apify.com/publicrecords/legistar-meetings-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~legistar-meetings-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~legistar-meetings-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clients\": [\n    \"seattle\",\n    \"milwaukee\",\n    \"madison\",\n    \"oakland\",\n    \"sanjose\",\n    \"boston\",\n    \"denver\",\n    \"columbus\"\n  ],\n  \"dateFrom\": \"2026-09-20\",\n  \"dateTo\": \"2026-09-28\",\n  \"maxItems\": 200,\n  \"resource\": \"events\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~legistar-meetings-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~legistar-meetings-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"clients\": [\n    \"seattle\",\n    \"milwaukee\",\n    \"madison\",\n    \"oakland\",\n    \"sanjose\",\n    \"boston\",\n    \"denver\",\n    \"columbus\"\n  ],\n  \"dateFrom\": \"2026-09-20\",\n  \"dateTo\": \"2026-09-28\",\n  \"maxItems\": 200,\n  \"resource\": \"events\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Company Website to LinkedIn & Social Media Links",
+      "description": "Which social profiles belong to this company? Resolves a name, website or Google Maps listing to its LinkedIn, X, YouTube, Instagram and Facebook handles, with evidence. Instagram and Facebook are returned from the site on the default path, not platform-verified.\n\nStore page: https://apify.com/publicrecords/company-social-profile-finder",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~company-social-profile-finder/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~company-social-profile-finder",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"resolve\",\n  \"queries\": [\n    \"apify.com\"\n  ],\n  \"probeMode\": \"direct\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~company-social-profile-finder/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~company-social-profile-finder",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"resolve\",\n  \"queries\": [\n    \"apify.com\"\n  ],\n  \"probeMode\": \"direct\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG",
+      "description": "Live odds from 24 Kambi-powered sportsbooks in one call: BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG. One row per game with every book's price and the best price per outcome.\n\nStore page: https://apify.com/publicrecords/sports-odds-api",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~sports-odds-api/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~sports-odds-api",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leagues\": [\n    \"basketball/nba\",\n    \"american_football/nfl\",\n    \"ice_hockey/nhl\",\n    \"baseball/mlb\",\n    \"football/england/premier_league\"\n  ],\n  \"maxEvents\": 10,\n  \"proxyConfiguration\": {\n    \"useApifyProxy\": true\n  },\n  \"operators\": [\n    \"rsiusnj\",\n    \"rsiusny\",\n    \"rsiuspa\",\n    \"rsicaon\",\n    \"ubuk\",\n    \"ubca\",\n    \"paf\",\n    \"svenskaspel\",\n    \"atg\"\n  ],\n  \"markets\": \"main\",\n  \"includeLive\": true,\n  \"startsWithinHours\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~sports-odds-api/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~sports-odds-api",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leagues\": [\n    \"basketball/nba\",\n    \"american_football/nfl\",\n    \"ice_hockey/nhl\",\n    \"baseball/mlb\",\n    \"football/england/premier_league\"\n  ],\n  \"maxEvents\": 10,\n  \"proxyConfiguration\": {\n    \"useApifyProxy\": true\n  },\n  \"operators\": [\n    \"rsiusnj\",\n    \"rsiusny\",\n    \"rsiuspa\",\n    \"rsicaon\",\n    \"ubuk\",\n    \"ubca\",\n    \"paf\",\n    \"svenskaspel\",\n    \"atg\"\n  ],\n  \"markets\": \"main\",\n  \"includeLive\": true,\n  \"startsWithinHours\": 0\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "TED Tenders Daily: EU procurement notices from Tenders",
+      "description": "Which EU tenders were published today? Returns TED (Tenders Electronic Daily) notices with buyer, CPV, value, deadline and source link.\n\nStore page: https://apify.com/publicrecords/eu-ted-notices-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~eu-ted-notices-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~eu-ted-notices-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publicationDateFrom\": \"2026-09-28\",\n  \"publicationDateTo\": \"2026-09-28\",\n  \"scope\": \"ALL\",\n  \"maxItems\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~eu-ted-notices-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~eu-ted-notices-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"publicationDateFrom\": \"2026-09-28\",\n  \"publicationDateTo\": \"2026-09-28\",\n  \"scope\": \"ALL\",\n  \"maxItems\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "SmartRecruiters Jobs Scraper \u2014 New Postings Since Any Date",
+      "description": "Scrape open jobs from any SmartRecruiters careers site and return only postings released since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/smartrecruiters-jobs-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~smartrecruiters-jobs-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~smartrecruiters-jobs-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"Ubisoft2\",\n    \"smartrecruiters\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~smartrecruiters-jobs-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~smartrecruiters-jobs-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"Ubisoft2\",\n    \"smartrecruiters\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Ashby Jobs Scraper \u2014 New Postings Since Any Date",
+      "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/ashby-jobs-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~ashby-jobs-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~ashby-jobs-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"ramp\",\n    \"linear\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~ashby-jobs-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~ashby-jobs-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"ramp\",\n    \"linear\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Lever Jobs Scraper \u2014 New Postings Since Any Date",
+      "description": "Scrape open jobs from any Lever job board and return only postings created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/lever-jobs-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~lever-jobs-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~lever-jobs-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"veeva\",\n    \"palantir\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~lever-jobs-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~lever-jobs-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"veeva\",\n    \"palantir\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+      "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/greenhouse-jobs-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~greenhouse-jobs-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~greenhouse-jobs-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"gitlab\",\n    \"cloudflare\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~greenhouse-jobs-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~greenhouse-jobs-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"companies\": [\n    \"gitlab\",\n    \"cloudflare\"\n  ],\n  \"since\": \"30d\",\n  \"maxResults\": 50,\n  \"includeDescription\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Federal Contract Opportunities: SAM.gov + Grants.gov in one",
+      "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nStore page: https://apify.com/publicrecords/govcon-opportunity-feed",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~govcon-opportunity-feed/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~govcon-opportunity-feed",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"snapshot\",\n  \"sources\": [\n    \"sam\"\n  ],\n  \"samBulk\": true,\n  \"samEnrichLimit\": 0,\n  \"naics\": [\n    \"541512\"\n  ],\n  \"postedWithinDays\": 14,\n  \"maxItems\": 25,\n  \"includeDescriptions\": false,\n  \"includeContacts\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~govcon-opportunity-feed/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~govcon-opportunity-feed",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"snapshot\",\n  \"sources\": [\n    \"sam\"\n  ],\n  \"samBulk\": true,\n  \"samEnrichLimit\": 0,\n  \"naics\": [\n    \"541512\"\n  ],\n  \"postedWithinDays\": 14,\n  \"maxItems\": 25,\n  \"includeDescriptions\": false,\n  \"includeContacts\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Grants.gov Search API: federal grants list with deadlines",
+      "description": "Which federal grants are open right now? Searches Grants.gov and returns opportunity, agency, deadline, eligibility and the source link.\n\nStore page: https://apify.com/publicrecords/grants-gov-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~grants-gov-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~grants-gov-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"posted\",\n  \"maxItems\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~grants-gov-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~grants-gov-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"status\": \"posted\",\n  \"maxItems\": 200\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Find a Tender & Contracts Finder: UK government tenders",
+      "description": "Which UK government tenders were published today? Returns Find a Tender and Contracts Finder notices with buyer, value, deadline and source link.\n\nStore page: https://apify.com/publicrecords/uk-find-a-tender-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~uk-find-a-tender-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~uk-find-a-tender-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"noticeType\": [\n    \"tender\"\n  ],\n  \"updatedFrom\": \"2026-09-28T00:00:00\",\n  \"maxItems\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~uk-find-a-tender-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~uk-find-a-tender-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"noticeType\": [\n    \"tender\"\n  ],\n  \"updatedFrom\": \"2026-09-28T00:00:00\",\n  \"maxItems\": 100\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "USAspending API Awards: federal contract and grant awards",
+      "description": "Who won federal contracts and grants, and for how much? Pulls USAspending awards by agency, recipient, NAICS and period, with award IDs and source links.\n\nStore page: https://apify.com/publicrecords/usaspending-awards-scraper",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~usaspending-awards-scraper/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~usaspending-awards-scraper",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agency\": \"Department of Defense\",\n  \"awardTypes\": [\n    \"A\",\n    \"B\",\n    \"C\",\n    \"D\"\n  ],\n  \"maxItems\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~usaspending-awards-scraper/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~usaspending-awards-scraper",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"agency\": \"Department of Defense\",\n  \"awardTypes\": [\n    \"A\",\n    \"B\",\n    \"C\",\n    \"D\"\n  ],\n  \"maxItems\": 50\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    },
+    {
+      "name": "Calibration Ledger \u2014 trust a forecast, with evidence (beta)",
+      "description": "Given a claim from an organization (IMF, OECD, Fed/FOMC, SPF, ECB SPF, or a listed issuer), returns that organization's track record: error distribution, intervals, bias, band coverage, worst misses with source links \u2014 or honest 'no coverage' (free). Organizations only, never people.\n\nStore page: https://apify.com/publicrecords/calibration-ledger",
+      "item": [
+        {
+          "name": "Run and get results (sync)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~calibration-ledger/run-sync-get-dataset-items",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~calibration-ledger",
+                "run-sync-get-dataset-items"
+              ]
+            },
+            "description": "Waits up to 300 s, returns items.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"lookup\",\n  \"source\": \"oecd_eo\",\n  \"series\": \"RGDP_GROWTH_A\",\n  \"geo\": \"CAN\",\n  \"target_period\": \"2027\",\n  \"point\": \"1.8\",\n  \"published_at\": \"2026-06-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Start run (async)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/acts/publicrecords~calibration-ledger/runs",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "acts",
+                "publicrecords~calibration-ledger",
+                "runs"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"mode\": \"lookup\",\n  \"source\": \"oecd_eo\",\n  \"series\": \"RGDP_GROWTH_A\",\n  \"geo\": \"CAN\",\n  \"target_period\": \"2027\",\n  \"point\": \"1.8\",\n  \"published_at\": \"2026-06-01\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Get run status",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/actor-runs/{{runId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "actor-runs",
+                "{{runId}}"
+              ]
+            },
+            "description": ""
+          }
+        },
+        {
+          "name": "Get results",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/datasets/{{datasetId}}/items?format=json",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "datasets",
+                "{{datasetId}}",
+                "items"
+              ]
+            },
+            "description": ""
+          }
+        }
+      ]
+    }
+  ]
+}

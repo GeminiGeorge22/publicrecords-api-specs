@@ -1,0 +1,258 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Find a Tender & Contracts Finder: UK government tenders",
+    "version": "0.0.13",
+    "description": "Which UK government tenders were published today? Returns Find a Tender and Contracts Finder notices with buyer, value, deadline and source link.\n\nRuns the Apify Actor publicrecords/uk-find-a-tender-scraper (https://apify.com/publicrecords/uk-find-a-tender-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "contact": {
+      "name": "publicrecords",
+      "url": "https://apify.com/publicrecords/uk-find-a-tender-scraper"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "externalDocs": {
+    "url": "https://apify.com/publicrecords/uk-find-a-tender-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "security": [
+    {
+      "apifyToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apifyToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Your own Apify API token (Apify Console > Settings > API & Integrations)."
+      }
+    },
+    "schemas": {
+      "Input": {
+        "title": "UK Find a Tender Scraper",
+        "description": "Public OCDS 1.1 packages from Find a Tender. Keywords and CPV are applied client-side after flatten.",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Case-insensitive match on tender title, description, or buyer name (client-side).",
+            "default": []
+          },
+          "cpv": {
+            "title": "CPV codes",
+            "type": "array",
+            "description": "Match when tender.items[].classification.id starts with any code (client-side).",
+            "default": []
+          },
+          "noticeType": {
+            "title": "Notice stages",
+            "type": "array",
+            "description": "Mapped to API stages: planning | tender | award. Omit for all.",
+            "default": []
+          },
+          "updatedFrom": {
+            "title": "Updated from",
+            "type": "string",
+            "description": "ISO datetime. Default: 7 days ago.",
+            "nullable": true
+          },
+          "updatedTo": {
+            "title": "Updated to",
+            "type": "string",
+            "description": "ISO datetime. Default: now.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on notice rows.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "defaultDatasetId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/acts/publicrecords~uk-find-a-tender-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_uk_find_a_tender_scraper",
+        "summary": "Run Find a Tender & Contracts Finder: UK government tenders and return results",
+        "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "noticeType": [
+                  "tender"
+                ],
+                "updatedFrom": "2026-09-28T00:00:00",
+                "maxItems": 100
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~uk-find-a-tender-scraper/runs": {
+      "post": {
+        "operationId": "runAsync_uk_find_a_tender_scraper",
+        "summary": "Start Find a Tender & Contracts Finder: UK government tenders (async)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "noticeType": [
+                  "tender"
+                ],
+                "updatedFrom": "2026-09-28T00:00:00",
+                "maxItems": 100
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actor-runs/{runId}": {
+      "get": {
+        "operationId": "getRun_uk_find_a_tender_scraper",
+        "summary": "Get run status",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasets/{datasetId}/items": {
+      "get": {
+        "operationId": "getItems_uk_find_a_tender_scraper",
+        "summary": "Get run results",
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "csv",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items"
+          }
+        }
+      }
+    }
+  }
+}

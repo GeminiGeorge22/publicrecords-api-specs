@@ -1,0 +1,250 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+    "version": "0.0.9",
+    "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/greenhouse-jobs-scraper (https://apify.com/publicrecords/greenhouse-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "contact": {
+      "name": "publicrecords",
+      "url": "https://apify.com/publicrecords/greenhouse-jobs-scraper"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "externalDocs": {
+    "url": "https://apify.com/publicrecords/greenhouse-jobs-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "security": [
+    {
+      "apifyToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apifyToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Your own Apify API token (Apify Console > Settings > API & Integrations)."
+      }
+    },
+    "schemas": {
+      "Input": {
+        "title": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "Greenhouse board tokens",
+            "type": "array",
+            "description": "The token in the board URL: https://boards.greenhouse.io/<token> or https://job-boards.greenhouse.io/<token>. One per line, or paste the URLs."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "defaultDatasetId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/acts/publicrecords~greenhouse-jobs-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_greenhouse_jobs_scraper",
+        "summary": "Run Greenhouse Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "companies": [
+                  "gitlab",
+                  "cloudflare"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~greenhouse-jobs-scraper/runs": {
+      "post": {
+        "operationId": "runAsync_greenhouse_jobs_scraper",
+        "summary": "Start Greenhouse Jobs Scraper \u2014 New Postings Since Any Date (async)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "companies": [
+                  "gitlab",
+                  "cloudflare"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actor-runs/{runId}": {
+      "get": {
+        "operationId": "getRun_greenhouse_jobs_scraper",
+        "summary": "Get run status",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasets/{datasetId}/items": {
+      "get": {
+        "operationId": "getItems_greenhouse_jobs_scraper",
+        "summary": "Get run results",
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "csv",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items"
+          }
+        }
+      }
+    }
+  }
+}

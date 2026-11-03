@@ -1,0 +1,130 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TED Tenders Daily: EU procurement notices from Tenders",
+    "version": "1.0.0",
+    "description": "Which EU tenders were published today? Returns TED (Tenders Electronic Daily) notices with buyer, CPV, value, deadline and source link.\n\nMore: https://apify.com/publicrecords/eu-ted-notices-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "EU TED Notices Scraper",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords (full-text)",
+            "type": "string",
+            "description": "Optional. Mapped to TED expert-search FT~\"\u2026\" full-text. Ignored if expertQuery is set."
+          },
+          "expertQuery": {
+            "title": "Expert query (advanced)",
+            "type": "string",
+            "description": "Optional raw TED Expert Search expression. When set, overrides keywords / dates / noticeType / cpv / buyerCountry filters (you must include SORT BY yourself if desired). Example: buyer-country=DEU AND PD>=20260101 SORT BY publication-date DESC"
+          },
+          "publicationDateFrom": {
+            "title": "Publication date from (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Default: 14 days ago. Converted to TED PD>=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "publicationDateTo": {
+            "title": "Publication date to (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Converted to TED PD<=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "noticeType": {
+            "title": "Notice type",
+            "type": "string",
+            "description": "Optional eForms notice-type filter (e.g. cn-standard, can-standard, pin-only, pin-cfc-standard). Ignored if expertQuery is set."
+          },
+          "cpv": {
+            "title": "CPV code",
+            "type": "string",
+            "description": "Optional Common Procurement Vocabulary code (e.g. 72000000). Mapped to classification-cpv. Ignored if expertQuery is set."
+          },
+          "buyerCountry": {
+            "title": "Buyer country (ISO3)",
+            "type": "string",
+            "description": "Optional ISO 3166-1 alpha-3 buyer country (e.g. DEU, FRA, NLD). Mapped to buyer-country. Ignored if expertQuery is set."
+          },
+          "scope": {
+            "title": "Search scope",
+            "type": "string",
+            "description": "TED scope: ALL (archive) or ACTIVE (currently open). Default ALL.",
+            "enum": [
+              "ALL",
+              "ACTIVE"
+            ],
+            "default": "ALL"
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Maximum notice rows to push to the default dataset.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/eu-ted-notices-scraper": {
+      "post": {
+        "operationId": "run_eu_ted_notices_scraper",
+        "summary": "Run TED Tenders Daily: EU procurement notices from Tenders",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "publicationDateFrom": "2026-09-28",
+                "publicationDateTo": "2026-09-28",
+                "scope": "ALL",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

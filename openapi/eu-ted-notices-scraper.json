@@ -1,0 +1,270 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "TED Tenders Daily: EU procurement notices from Tenders",
+    "version": "0.0.14",
+    "description": "Which EU tenders were published today? Returns TED (Tenders Electronic Daily) notices with buyer, CPV, value, deadline and source link.\n\nRuns the Apify Actor publicrecords/eu-ted-notices-scraper (https://apify.com/publicrecords/eu-ted-notices-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "contact": {
+      "name": "publicrecords",
+      "url": "https://apify.com/publicrecords/eu-ted-notices-scraper"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "externalDocs": {
+    "url": "https://apify.com/publicrecords/eu-ted-notices-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "security": [
+    {
+      "apifyToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apifyToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Your own Apify API token (Apify Console > Settings > API & Integrations)."
+      }
+    },
+    "schemas": {
+      "Input": {
+        "title": "EU TED Notices Scraper",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords (full-text)",
+            "type": "string",
+            "description": "Optional. Mapped to TED expert-search FT~\"\u2026\" full-text. Ignored if expertQuery is set."
+          },
+          "expertQuery": {
+            "title": "Expert query (advanced)",
+            "type": "string",
+            "description": "Optional raw TED Expert Search expression. When set, overrides keywords / dates / noticeType / cpv / buyerCountry filters (you must include SORT BY yourself if desired). Example: buyer-country=DEU AND PD>=20260101 SORT BY publication-date DESC"
+          },
+          "publicationDateFrom": {
+            "title": "Publication date from (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Default: 14 days ago. Converted to TED PD>=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "publicationDateTo": {
+            "title": "Publication date to (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Converted to TED PD<=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "noticeType": {
+            "title": "Notice type",
+            "type": "string",
+            "description": "Optional eForms notice-type filter (e.g. cn-standard, can-standard, pin-only, pin-cfc-standard). Ignored if expertQuery is set."
+          },
+          "cpv": {
+            "title": "CPV code",
+            "type": "string",
+            "description": "Optional Common Procurement Vocabulary code (e.g. 72000000). Mapped to classification-cpv. Ignored if expertQuery is set."
+          },
+          "buyerCountry": {
+            "title": "Buyer country (ISO3)",
+            "type": "string",
+            "description": "Optional ISO 3166-1 alpha-3 buyer country (e.g. DEU, FRA, NLD). Mapped to buyer-country. Ignored if expertQuery is set."
+          },
+          "scope": {
+            "title": "Search scope",
+            "type": "string",
+            "description": "TED scope: ALL (archive) or ACTIVE (currently open). Default ALL.",
+            "enum": [
+              "ALL",
+              "ACTIVE"
+            ],
+            "default": "ALL"
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Maximum notice rows to push to the default dataset.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "defaultDatasetId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/acts/publicrecords~eu-ted-notices-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_eu_ted_notices_scraper",
+        "summary": "Run TED Tenders Daily: EU procurement notices from Tenders and return results",
+        "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "publicationDateFrom": "2026-09-28",
+                "publicationDateTo": "2026-09-28",
+                "scope": "ALL",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~eu-ted-notices-scraper/runs": {
+      "post": {
+        "operationId": "runAsync_eu_ted_notices_scraper",
+        "summary": "Start TED Tenders Daily: EU procurement notices from Tenders (async)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "publicationDateFrom": "2026-09-28",
+                "publicationDateTo": "2026-09-28",
+                "scope": "ALL",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actor-runs/{runId}": {
+      "get": {
+        "operationId": "getRun_eu_ted_notices_scraper",
+        "summary": "Get run status",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasets/{datasetId}/items": {
+      "get": {
+        "operationId": "getItems_eu_ted_notices_scraper",
+        "summary": "Get run results",
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "csv",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,141 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Legistar City Council Minutes & Agendas: meetings, items",
+    "version": "1.0.0",
+    "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.\n\nMore: https://apify.com/publicrecords/legistar-meetings-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "Legistar Meetings Scraper",
+        "description": "Public Granicus Legistar Web API. Client slug is the first label of {slug}.legistar.com (e.g. seattle). chicago currently 500s; phila 403s.",
+        "type": "object",
+        "properties": {
+          "clients": {
+            "title": "Client slugs",
+            "type": "array",
+            "description": "Legistar client codes. Use the hostname label of {slug}.legistar.com. Working examples: seattle, milwaukee, madison, oakland, sanjose, boston, denver, columbus.",
+            "default": [
+              "seattle"
+            ]
+          },
+          "dateFrom": {
+            "title": "From date",
+            "type": "string",
+            "description": "Inclusive YYYY-MM-DD (EventDate / MatterIntroDate). Default: 30 days ago.",
+            "nullable": true
+          },
+          "dateTo": {
+            "title": "To date",
+            "type": "string",
+            "description": "Inclusive YYYY-MM-DD. Default: today + 14 days.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on dataset rows (events + matters combined).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string",
+            "description": "Which Legistar collection to pull.",
+            "enum": [
+              "events",
+              "matters",
+              "both"
+            ],
+            "x-enumTitles": [
+              "Meetings (events)",
+              "Matters (legislation)",
+              "Both"
+            ],
+            "default": "events"
+          },
+          "includeEventItems": {
+            "title": "Include agenda item titles",
+            "type": "boolean",
+            "description": "Extra HTTP call per event. Titles flattened into eventItemTitles (pipe-separated). Default off.",
+            "default": false
+          }
+        },
+        "required": [
+          "clients"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/v1/legistar-meetings-scraper": {
+      "post": {
+        "operationId": "run_legistar_meetings_scraper",
+        "summary": "Run Legistar City Council Minutes & Agendas: meetings, items",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "clients": [
+                  "seattle",
+                  "milwaukee",
+                  "madison",
+                  "oakland",
+                  "sanjose",
+                  "boston",
+                  "denver",
+                  "columbus"
+                ],
+                "dateFrom": "2026-09-20",
+                "dateTo": "2026-09-28",
+                "maxItems": 200,
+                "resource": "events"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

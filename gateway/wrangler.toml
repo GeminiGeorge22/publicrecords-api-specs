@@ -1,0 +1,9 @@
+name = "publicrecords-api-gateway"
+main = "src/index.js"
+compatibility_date = "2026-10-01"
+workers_dev = true
+# Secrets (set with `wrangler secret put`, never committed):
+#   APIFY_TOKEN               scoped Apify token: run permission on the listed Actors only
+#   PROXY_SECRET_RAPIDAPI     X-RapidAPI-Proxy-Secret from the RapidAPI provider dashboard
+#   PROXY_SECRET_ZYLA         shared secret header configured in Zyla
+#   PROXY_SECRET_APIMARKET    shared secret header configured in API.market

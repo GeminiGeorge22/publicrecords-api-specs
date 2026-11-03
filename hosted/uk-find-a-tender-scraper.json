@@ -1,0 +1,117 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Find a Tender & Contracts Finder: UK government tenders",
+    "version": "1.0.0",
+    "description": "Which UK government tenders were published today? Returns Find a Tender and Contracts Finder notices with buyer, value, deadline and source link.\n\nMore: https://apify.com/publicrecords/uk-find-a-tender-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "UK Find a Tender Scraper",
+        "description": "Public OCDS 1.1 packages from Find a Tender. Keywords and CPV are applied client-side after flatten.",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Case-insensitive match on tender title, description, or buyer name (client-side).",
+            "default": []
+          },
+          "cpv": {
+            "title": "CPV codes",
+            "type": "array",
+            "description": "Match when tender.items[].classification.id starts with any code (client-side).",
+            "default": []
+          },
+          "noticeType": {
+            "title": "Notice stages",
+            "type": "array",
+            "description": "Mapped to API stages: planning | tender | award. Omit for all.",
+            "default": []
+          },
+          "updatedFrom": {
+            "title": "Updated from",
+            "type": "string",
+            "description": "ISO datetime. Default: 7 days ago.",
+            "nullable": true
+          },
+          "updatedTo": {
+            "title": "Updated to",
+            "type": "string",
+            "description": "ISO datetime. Default: now.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on notice rows.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/uk-find-a-tender-scraper": {
+      "post": {
+        "operationId": "run_uk_find_a_tender_scraper",
+        "summary": "Run Find a Tender & Contracts Finder: UK government tenders",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "noticeType": [
+                  "tender"
+                ],
+                "updatedFrom": "2026-09-28T00:00:00",
+                "maxItems": 100
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

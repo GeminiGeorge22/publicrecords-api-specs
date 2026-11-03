@@ -1,0 +1,107 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+    "version": "1.0.0",
+    "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nMore: https://apify.com/publicrecords/greenhouse-jobs-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "Greenhouse board tokens",
+            "type": "array",
+            "description": "The token in the board URL: https://boards.greenhouse.io/<token> or https://job-boards.greenhouse.io/<token>. One per line, or paste the URLs."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/v1/greenhouse-jobs-scraper": {
+      "post": {
+        "operationId": "run_greenhouse_jobs_scraper",
+        "summary": "Run Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "companies": [
+                  "gitlab",
+                  "cloudflare"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

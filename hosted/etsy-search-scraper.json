@@ -1,0 +1,224 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Etsy Scraper \u2014 Listings, Prices & Best Sellers",
+    "version": "1.0.0",
+    "description": "Scrape Etsy search results: product listings, prices, ratings, reviews, Bestseller badges and shops. Built for product research and competitor pricing.\n\nMore: https://apify.com/publicrecords/etsy-search-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "Etsy Search Scraper input",
+        "type": "object",
+        "properties": {
+          "queries": {
+            "title": "Search keywords",
+            "type": "array",
+            "description": "Keywords to search, one per line (e.g. ceramic mug). Each keyword lands on Etsy's /market page, then pages through Etsy's own search API \u2014 every listing on the page (rendered and lazy-loaded), in Etsy's rank order."
+          },
+          "sort": {
+            "title": "Sort",
+            "type": "string",
+            "default": "relevance",
+            "enum": [
+              "relevance",
+              "newest",
+              "price_asc",
+              "price_desc",
+              "top_reviews"
+            ],
+            "x-enumTitles": [
+              "Relevance (Etsy default)",
+              "Newest",
+              "Price: low to high",
+              "Price: high to low",
+              "Top customer reviews"
+            ],
+            "description": "Order of results, as on Etsy's own sort menu. Applies to search keywords (a market phrase with a sort set runs as a keyword search)."
+          },
+          "minPrice": {
+            "title": "Min price",
+            "type": "integer",
+            "minimum": 0,
+            "description": "Lowest price to include, in whole units of the shop currency shown to your proxy's region (e.g. 10 = $10). Leave empty for no minimum."
+          },
+          "maxPrice": {
+            "title": "Max price",
+            "type": "integer",
+            "minimum": 0,
+            "description": "Highest price to include, whole units. Leave empty for no maximum."
+          },
+          "marketPhrases": {
+            "title": "Market phrases",
+            "type": "array",
+            "description": "Phrases for Etsy's /market/ pages (any phrase resolves). Example: personalized dog collar"
+          },
+          "categoryUrls": {
+            "title": "Category URLs",
+            "type": "array",
+            "description": "Etsy category pages, e.g. https://www.etsy.com/c/jewelry/necklaces (no query string). Read in Etsy's default order."
+          },
+          "maxPages": {
+            "title": "Max pages per input",
+            "type": "integer",
+            "description": "Pages per input, 1\u201320 (Etsy's own cap). On the Standby/MCP endpoint one call stops at 240 s and says so (truncated:true with pagesDone/pagesRequested); big jobs belong in a batch run.",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 5
+          },
+          "maxItems": {
+            "title": "Max listings per run (0 = no cap)",
+            "type": "integer",
+            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs $0.00005 + 20 x $0.004 = $0.08005 (about $0.08) on the Free plan. Raise it (or set 0 for no cap) to get more pages.",
+            "minimum": 0,
+            "default": 20
+          },
+          "maxCacheAgeHours": {
+            "title": "Max snapshot age (hours)",
+            "type": "integer",
+            "minimum": 0,
+            "default": 24,
+            "description": "Serve a keyword from our recent snapshot of the same search when it is at most this many hours old and holds every row you asked for; otherwise fetch live. Snapshot rows say data_source \"cache\", stale true and as_of (when they were read live), and are charged like live rows. 0 = always fetch live."
+          },
+          "fillLazyCards": {
+            "title": "Return every listing on the page",
+            "type": "boolean",
+            "default": true,
+            "description": "Etsy renders 12 cards and lazy-loads the rest (48 more on page 1). On, the run fetches them the way Etsy's own page does, so you get the whole page in rank order. Off, you get the 12 rendered cards per page only (faster, fewer requests on your proxy)."
+          },
+          "is_best_seller": {
+            "title": "Bestsellers only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings marked Bestseller."
+          },
+          "is_star_seller": {
+            "title": "Star Seller shops only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings from Star Seller shops."
+          },
+          "free_shipping": {
+            "title": "Free shipping only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings with free shipping."
+          },
+          "is_discounted": {
+            "title": "On sale only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings currently on sale."
+          },
+          "instant_download": {
+            "title": "Digital downloads only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return digital download listings."
+          },
+          "is_handmade_only": {
+            "title": "Handmade only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings Etsy flags as handmade."
+          },
+          "is_personalizable": {
+            "title": "Personalizable only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings that offer personalization."
+          },
+          "max_processing_days": {
+            "title": "Ready to ship within (days)",
+            "type": "integer",
+            "minimum": 1,
+            "description": "Only return listings whose processing time is at most this many days (Etsy's ready-to-ship filter)."
+          },
+          "ship_to": {
+            "title": "Ships to (country code)",
+            "type": "string",
+            "description": "Two-letter code, e.g. US, GB, DE."
+          },
+          "source": {
+            "title": "Source",
+            "type": "string",
+            "description": "Optional free-text label for this run (for example the Make template that started it). Copied onto every listing row and onto RUN_SUMMARY so template runs can be filtered. Leave empty if you do not need it.",
+            "default": ""
+          },
+          "proxyConfiguration": {
+            "title": "Proxy",
+            "type": "object",
+            "description": "Etsy blocks datacenter IPs. Default: Apify Proxy RESIDENTIAL, included in the event prices (no separate proxy or compute charge). Your own residential proxy works too. A blocked page is never charged.",
+            "default": {}
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/etsy-search-scraper": {
+      "post": {
+        "operationId": "run_etsy_search_scraper",
+        "summary": "Run Etsy Scraper \u2014 Listings, Prices & Best Sellers",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "queries": [
+                  "ceramic mug"
+                ],
+                "maxPages": 1,
+                "proxyConfiguration": {
+                  "useApifyProxy": true,
+                  "apifyProxyGroups": [
+                    "RESIDENTIAL"
+                  ],
+                  "apifyProxyCountry": "US"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

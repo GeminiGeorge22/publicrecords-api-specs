@@ -1,0 +1,345 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Calibration Ledger \u2014 trust a forecast, with evidence (beta)",
+    "version": "0.2.26",
+    "description": "Score IMF, OECD, Fed, SPF and issuer claims vs outcomes \u2014 bands, bias, misses, or honest no coverage.\n\nRuns the Apify Actor publicrecords/calibration-ledger (https://apify.com/publicrecords/calibration-ledger) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "contact": {
+      "name": "publicrecords",
+      "url": "https://apify.com/publicrecords/calibration-ledger"
+    },
+    "license": {
+      "name": "MIT"
+    }
+  },
+  "externalDocs": {
+    "url": "https://apify.com/publicrecords/calibration-ledger"
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "security": [
+    {
+      "apifyToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apifyToken": {
+        "type": "http",
+        "scheme": "bearer",
+        "description": "Your own Apify API token (Apify Console > Settings > API & Integrations)."
+      }
+    },
+    "schemas": {
+      "Input": {
+        "title": "Calibration Ledger input",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "title": "Mode",
+            "type": "string",
+            "default": "text",
+            "enum": [
+              "text",
+              "lookup",
+              "score",
+              "compare",
+              "issuer",
+              "coverage",
+              "verify"
+            ],
+            "x-enumTitles": [
+              "Text: any claim in words",
+              "Lookup: a live number by source/series/geo/period",
+              "Score: a source's record on a series",
+              "Compare: rank sources on one question",
+              "Issuer: an issuer's promise-keeping record",
+              "Coverage: what the ledger can answer",
+              "Verify: provenance of a claim id"
+            ],
+            "description": "text = hand it a sentence (\"The IMF expects Canada's economy to grow 1.8% in 2027\"). lookup/score/compare use structured fields."
+          },
+          "claim_text": {
+            "title": "Claim (text mode)",
+            "type": "string",
+            "description": "Free-text claim for text mode (e.g. \"The IMF expects Canada's economy to grow 1.8% in 2027\")."
+          },
+          "source": {
+            "title": "Source organization",
+            "type": "string",
+            "description": "imf_weo | oecd_eo | fed_sep | spf | ecb_spf | pbo, or an issuer name; optional in text mode"
+          },
+          "series": {
+            "title": "Series",
+            "type": "string",
+            "enum": [
+              "CORE_INFL_A",
+              "CORE_PCE_INFL",
+              "CPI_INFL",
+              "CURRENT_ACCOUNT_PCTGDP",
+              "EMPLOY_GROWTH_A",
+              "FEDFUNDS",
+              "GDP_DEFLATOR_A",
+              "GOV_BALANCE_PCTGDP",
+              "GOV_GROSS_DEBT_PCTGDP",
+              "HICP_INFL_M",
+              "LONG_RATE",
+              "NGDP_GROWTH_Q",
+              "PCE_INFL",
+              "PGDP_INFL_Q",
+              "RCONSUM_GROWTH_A",
+              "RCONSUM_GROWTH_Q",
+              "REXPORT_GROWTH_A",
+              "RGDP_GROWTH_A",
+              "RGDP_GROWTH_Q",
+              "RIMPORT_GROWTH_A",
+              "RINVEST_GROWTH_A",
+              "RNRESIN_GROWTH_Q",
+              "RRESINV_GROWTH_Q",
+              "SHORT_RATE",
+              "UNEMP_RATE",
+              "UNEMP_RATE_M"
+            ],
+            "description": "Generated from rules.yaml \u2014 every series the ledger resolves."
+          },
+          "geo": {
+            "title": "Geography (ISO3 / EA / USA)",
+            "type": "string",
+            "description": "ISO3 country code, EA, or USA. Required for most score/lookup/compare calls."
+          },
+          "target_period": {
+            "title": "Target period (YYYY, YYYYQn, YYYY-MM)",
+            "type": "string",
+            "description": "Target period as YYYY, YYYYQn, or YYYY-MM when looking up a specific claim."
+          },
+          "point": {
+            "title": "Claimed value",
+            "type": "string",
+            "description": "Numeric claimed value for lookup mode (string so decimals stay exact)."
+          },
+          "published_at": {
+            "title": "Claim date (YYYY-MM-DD)",
+            "type": "string",
+            "description": "When the claim was published (YYYY-MM-DD), for lookup/verify."
+          },
+          "horizon_bucket": {
+            "title": "Horizon bucket",
+            "type": "string",
+            "enum": [
+              "0-4m",
+              "4-9m",
+              "9-15m",
+              "15-24m",
+              "24-36m",
+              "36m+"
+            ],
+            "description": "Optional horizon bucket filter for score mode."
+          },
+          "band_kind": {
+            "title": "Band kind (score mode)",
+            "type": "string",
+            "enum": [
+              "central_tendency",
+              "range"
+            ],
+            "description": "For Fed SEP score mode: central_tendency or range."
+          },
+          "claim_id": {
+            "title": "Claim id (verify mode)",
+            "type": "string",
+            "description": "Ledger claim id for verify mode."
+          },
+          "issuer": {
+            "title": "Issuer (issuer mode)",
+            "type": "string",
+            "description": "Organization name as it appears on its releases/filings (e.g. Salesforce Inc). Both records are returned: dated promises (newswires) and numeric guidance (EDGAR)."
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      },
+      "Run": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "object",
+            "properties": {
+              "id": {
+                "type": "string"
+              },
+              "status": {
+                "type": "string"
+              },
+              "defaultDatasetId": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/acts/publicrecords~calibration-ledger/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_calibration_ledger",
+        "summary": "Run Calibration Ledger \u2014 trust a forecast, with evidence (beta) and return results",
+        "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "mode": "lookup",
+                "source": "oecd_eo",
+                "series": "RGDP_GROWTH_A",
+                "geo": "CAN",
+                "target_period": "2027",
+                "point": "1.8",
+                "published_at": "2026-06-01"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~calibration-ledger/runs": {
+      "post": {
+        "operationId": "runAsync_calibration_ledger",
+        "summary": "Start Calibration Ledger \u2014 trust a forecast, with evidence (beta) (async)",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "mode": "lookup",
+                "source": "oecd_eo",
+                "series": "RGDP_GROWTH_A",
+                "geo": "CAN",
+                "target_period": "2027",
+                "point": "1.8",
+                "published_at": "2026-06-01"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/actor-runs/{runId}": {
+      "get": {
+        "operationId": "getRun_calibration_ledger",
+        "summary": "Get run status",
+        "parameters": [
+          {
+            "name": "runId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Run object",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Run"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/datasets/{datasetId}/items": {
+      "get": {
+        "operationId": "getItems_calibration_ledger",
+        "summary": "Get run results",
+        "parameters": [
+          {
+            "name": "datasetId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "format",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "json",
+                "csv",
+                "xlsx"
+              ]
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Items"
+          }
+        }
+      }
+    }
+  }
+}

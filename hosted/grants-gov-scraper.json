@@ -1,0 +1,141 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Grants.gov Search API: federal grants list with deadlines",
+    "version": "1.0.0",
+    "description": "Which federal grants are open right now? Searches Grants.gov and returns opportunity, agency, deadline, eligibility and the source link.\n\nMore: https://apify.com/publicrecords/grants-gov-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "Grants.gov Opportunities Scraper",
+        "description": "Public Grants.gov search2 API. No API key. Response token/accessKey are ignored. Server date filter: postedWithinDays \u2192 dateRange. open/close date fields are client-side (API does not support custom MM/DD ranges).",
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "title": "Keyword",
+            "type": "string",
+            "description": "Search keyword (e.g. education, cybersecurity). Leave empty for all.",
+            "default": ""
+          },
+          "agency": {
+            "title": "Agency",
+            "type": "string",
+            "description": "Mapped to API body agencies (e.g. HHS, EPA, NSF).",
+            "default": "",
+            "nullable": true
+          },
+          "status": {
+            "title": "Opportunity status",
+            "type": "string",
+            "description": "Mapped to API oppStatuses. Use forecasted|posted|closed|archived or pipe-joined.",
+            "default": "forecasted|posted"
+          },
+          "postedWithinDays": {
+            "title": "Posted within N days",
+            "type": "integer",
+            "description": "Server-side filter mapped to search2 dateRange (posted-date lookback). Verified values: 3,7,14,21,28,35,42,49,56,90,180,365. Omit for no posted-date filter.",
+            "minimum": 1,
+            "maximum": 3650,
+            "nullable": true
+          },
+          "openDateFrom": {
+            "title": "Open date from",
+            "type": "string",
+            "description": "Client-side filter on openDate. Accepts MM/DD/YYYY or YYYY-MM-DD. Inclusive.",
+            "nullable": true
+          },
+          "openDateTo": {
+            "title": "Open date to",
+            "type": "string",
+            "description": "Client-side filter on openDate. Inclusive.",
+            "nullable": true
+          },
+          "closeDateFrom": {
+            "title": "Close date from",
+            "type": "string",
+            "description": "Client-side filter on closeDate. Inclusive. Useful for 'still open' windows.",
+            "nullable": true
+          },
+          "closeDateTo": {
+            "title": "Close date to",
+            "type": "string",
+            "description": "Client-side filter on closeDate. Inclusive.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on opportunity rows (deduped by opportunityId).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "fetchDetails": {
+            "title": "Fetch opportunity details",
+            "type": "boolean",
+            "description": "Hydrate synopsis via fetchOpportunity. Still one PPE charge per opportunity.",
+            "default": false
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/grants-gov-scraper": {
+      "post": {
+        "operationId": "run_grants_gov_scraper",
+        "summary": "Run Grants.gov Search API: federal grants list with deadlines",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "status": "posted",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

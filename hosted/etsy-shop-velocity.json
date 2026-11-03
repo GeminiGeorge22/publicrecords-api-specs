@@ -1,0 +1,112 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Etsy Shop Sales Tracker & Scraper",
+    "version": "1.0.0",
+    "description": "Track total sales of 200,000+ Etsy shops: sales counts with the date read and 7-day changes. Research competitor shops side by side. Pay per shop.\n\nMore: https://apify.com/publicrecords/etsy-shop-velocity"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "Etsy Shop Sales Velocity input",
+        "type": "object",
+        "properties": {
+          "shops": {
+            "title": "Shop names",
+            "type": "array",
+            "description": "Etsy shop names (the part after etsy.com/shop/). Leave empty to use the keyword or category filters."
+          },
+          "keywords": {
+            "title": "Keywords in shop title",
+            "type": "array",
+            "description": "Case-insensitive words matched against the shop title and headline."
+          },
+          "category": {
+            "title": "Panel category",
+            "type": "string",
+            "description": "Exact panel category label, matched case-insensitively, e.g. \"kids & baby > toys\", \"home & living > home decor > scatter cushions\", \"art & collectibles > fine art ceramics\". The label is filled for about 0.7% of shops, so a category filter returns only those shops. Empty = all."
+          },
+          "minSales": {
+            "title": "Minimum lifetime sales",
+            "type": "integer",
+            "description": "Only shops at or above this sales counter.",
+            "minimum": 0,
+            "default": 0
+          },
+          "since": {
+            "title": "Changed since (date)",
+            "type": "string",
+            "description": "ISO date. Return only shops whose counters changed since this date. Empty = all matching shops."
+          },
+          "maxShops": {
+            "title": "Max shops",
+            "type": "integer",
+            "description": "Upper bound on rows returned (and charged).",
+            "minimum": 1,
+            "maximum": 20000,
+            "default": 200
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/etsy-shop-velocity": {
+      "post": {
+        "operationId": "run_etsy_shop_velocity",
+        "summary": "Run Etsy Shop Sales Tracker & Scraper",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "shops": [
+                  "OrelCeramics",
+                  "Bestickend"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}

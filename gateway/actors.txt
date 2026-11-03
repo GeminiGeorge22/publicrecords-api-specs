@@ -1,0 +1,15 @@
+etsy-search-scraper
+etsy-shop-velocity
+legistar-meetings-scraper
+company-social-profile-finder
+sports-odds-api
+eu-ted-notices-scraper
+smartrecruiters-jobs-scraper
+ashby-jobs-scraper
+lever-jobs-scraper
+greenhouse-jobs-scraper
+govcon-opportunity-feed
+grants-gov-scraper
+uk-find-a-tender-scraper
+usaspending-awards-scraper
+calibration-ledger

@@ -1,0 +1,2274 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "publicrecords Actors",
+    "version": "1.0.0",
+    "description": "Etsy listings and shop sales, sports odds, ATS job postings, government tenders, grants, awards and council meetings, company social profiles and forecast calibration. Each operation runs one publicrecords Actor on the caller's own Apify account and returns result rows."
+  },
+  "servers": [
+    {
+      "url": "https://api.apify.com/v2"
+    }
+  ],
+  "security": [
+    {
+      "apifyToken": []
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "apifyToken": {
+        "type": "http",
+        "scheme": "bearer"
+      }
+    },
+    "schemas": {
+      "Input_etsy_search_scraper": {
+        "title": "Etsy Search Scraper input",
+        "type": "object",
+        "properties": {
+          "queries": {
+            "title": "Search keywords",
+            "type": "array",
+            "description": "Keywords to search, one per line (e.g. ceramic mug). Each keyword lands on Etsy's /market page, then pages through Etsy's own search API \u2014 every listing on the page (rendered and lazy-loaded), in Etsy's rank order."
+          },
+          "sort": {
+            "title": "Sort",
+            "type": "string",
+            "default": "relevance",
+            "enum": [
+              "relevance",
+              "newest",
+              "price_asc",
+              "price_desc",
+              "top_reviews"
+            ],
+            "x-enumTitles": [
+              "Relevance (Etsy default)",
+              "Newest",
+              "Price: low to high",
+              "Price: high to low",
+              "Top customer reviews"
+            ],
+            "description": "Order of results, as on Etsy's own sort menu. Applies to search keywords (a market phrase with a sort set runs as a keyword search)."
+          },
+          "minPrice": {
+            "title": "Min price",
+            "type": "integer",
+            "minimum": 0,
+            "description": "Lowest price to include, in whole units of the shop currency shown to your proxy's region (e.g. 10 = $10). Leave empty for no minimum."
+          },
+          "maxPrice": {
+            "title": "Max price",
+            "type": "integer",
+            "minimum": 0,
+            "description": "Highest price to include, whole units. Leave empty for no maximum."
+          },
+          "marketPhrases": {
+            "title": "Market phrases",
+            "type": "array",
+            "description": "Phrases for Etsy's /market/ pages (any phrase resolves). Example: personalized dog collar"
+          },
+          "categoryUrls": {
+            "title": "Category URLs",
+            "type": "array",
+            "description": "Etsy category pages, e.g. https://www.etsy.com/c/jewelry/necklaces (no query string). Read in Etsy's default order."
+          },
+          "maxPages": {
+            "title": "Max pages per input",
+            "type": "integer",
+            "description": "Pages per input, 1\u201320 (Etsy's own cap). On the Standby/MCP endpoint one call stops at 240 s and says so (truncated:true with pagesDone/pagesRequested); big jobs belong in a batch run.",
+            "minimum": 1,
+            "maximum": 20,
+            "default": 5
+          },
+          "maxItems": {
+            "title": "Max listings per run (0 = no cap)",
+            "type": "integer",
+            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs $0.00005 + 20 x $0.004 = $0.08005 (about $0.08) on the Free plan. Raise it (or set 0 for no cap) to get more pages.",
+            "minimum": 0,
+            "default": 20
+          },
+          "maxCacheAgeHours": {
+            "title": "Max snapshot age (hours)",
+            "type": "integer",
+            "minimum": 0,
+            "default": 24,
+            "description": "Serve a keyword from our recent snapshot of the same search when it is at most this many hours old and holds every row you asked for; otherwise fetch live. Snapshot rows say data_source \"cache\", stale true and as_of (when they were read live), and are charged like live rows. 0 = always fetch live."
+          },
+          "fillLazyCards": {
+            "title": "Return every listing on the page",
+            "type": "boolean",
+            "default": true,
+            "description": "Etsy renders 12 cards and lazy-loads the rest (48 more on page 1). On, the run fetches them the way Etsy's own page does, so you get the whole page in rank order. Off, you get the 12 rendered cards per page only (faster, fewer requests on your proxy)."
+          },
+          "is_best_seller": {
+            "title": "Bestsellers only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings marked Bestseller."
+          },
+          "is_star_seller": {
+            "title": "Star Seller shops only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings from Star Seller shops."
+          },
+          "free_shipping": {
+            "title": "Free shipping only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings with free shipping."
+          },
+          "is_discounted": {
+            "title": "On sale only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings currently on sale."
+          },
+          "instant_download": {
+            "title": "Digital downloads only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return digital download listings."
+          },
+          "is_handmade_only": {
+            "title": "Handmade only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings Etsy flags as handmade."
+          },
+          "is_personalizable": {
+            "title": "Personalizable only",
+            "type": "boolean",
+            "default": false,
+            "description": "Only return listings that offer personalization."
+          },
+          "max_processing_days": {
+            "title": "Ready to ship within (days)",
+            "type": "integer",
+            "minimum": 1,
+            "description": "Only return listings whose processing time is at most this many days (Etsy's ready-to-ship filter)."
+          },
+          "ship_to": {
+            "title": "Ships to (country code)",
+            "type": "string",
+            "description": "Two-letter code, e.g. US, GB, DE."
+          },
+          "source": {
+            "title": "Source",
+            "type": "string",
+            "description": "Optional free-text label for this run (for example the Make template that started it). Copied onto every listing row and onto RUN_SUMMARY so template runs can be filtered. Leave empty if you do not need it.",
+            "default": ""
+          },
+          "proxyConfiguration": {
+            "title": "Proxy",
+            "type": "object",
+            "description": "Etsy blocks datacenter IPs. Default: Apify Proxy RESIDENTIAL, included in the event prices (no separate proxy or compute charge). Your own residential proxy works too. A blocked page is never charged.",
+            "default": {}
+          }
+        }
+      },
+      "Input_etsy_shop_velocity": {
+        "title": "Etsy Shop Sales Velocity input",
+        "type": "object",
+        "properties": {
+          "shops": {
+            "title": "Shop names",
+            "type": "array",
+            "description": "Etsy shop names (the part after etsy.com/shop/). Leave empty to use the keyword or category filters."
+          },
+          "keywords": {
+            "title": "Keywords in shop title",
+            "type": "array",
+            "description": "Case-insensitive words matched against the shop title and headline."
+          },
+          "category": {
+            "title": "Panel category",
+            "type": "string",
+            "description": "Exact panel category label, matched case-insensitively, e.g. \"kids & baby > toys\", \"home & living > home decor > scatter cushions\", \"art & collectibles > fine art ceramics\". The label is filled for about 0.7% of shops, so a category filter returns only those shops. Empty = all."
+          },
+          "minSales": {
+            "title": "Minimum lifetime sales",
+            "type": "integer",
+            "description": "Only shops at or above this sales counter.",
+            "minimum": 0,
+            "default": 0
+          },
+          "since": {
+            "title": "Changed since (date)",
+            "type": "string",
+            "description": "ISO date. Return only shops whose counters changed since this date. Empty = all matching shops."
+          },
+          "maxShops": {
+            "title": "Max shops",
+            "type": "integer",
+            "description": "Upper bound on rows returned (and charged).",
+            "minimum": 1,
+            "maximum": 20000,
+            "default": 200
+          }
+        }
+      },
+      "Input_legistar_meetings_scraper": {
+        "title": "Legistar Meetings Scraper",
+        "description": "Public Granicus Legistar Web API. Client slug is the first label of {slug}.legistar.com (e.g. seattle). chicago currently 500s; phila 403s.",
+        "type": "object",
+        "properties": {
+          "clients": {
+            "title": "Client slugs",
+            "type": "array",
+            "description": "Legistar client codes. Use the hostname label of {slug}.legistar.com. Working examples: seattle, milwaukee, madison, oakland, sanjose, boston, denver, columbus.",
+            "default": [
+              "seattle"
+            ]
+          },
+          "dateFrom": {
+            "title": "From date",
+            "type": "string",
+            "description": "Inclusive YYYY-MM-DD (EventDate / MatterIntroDate). Default: 30 days ago.",
+            "nullable": true
+          },
+          "dateTo": {
+            "title": "To date",
+            "type": "string",
+            "description": "Inclusive YYYY-MM-DD. Default: today + 14 days.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on dataset rows (events + matters combined).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "resource": {
+            "title": "Resource",
+            "type": "string",
+            "description": "Which Legistar collection to pull.",
+            "enum": [
+              "events",
+              "matters",
+              "both"
+            ],
+            "x-enumTitles": [
+              "Meetings (events)",
+              "Matters (legislation)",
+              "Both"
+            ],
+            "default": "events"
+          },
+          "includeEventItems": {
+            "title": "Include agenda item titles",
+            "type": "boolean",
+            "description": "Extra HTTP call per event. Titles flattened into eventItemTitles (pipe-separated). Default off.",
+            "default": false
+          }
+        },
+        "required": [
+          "clients"
+        ]
+      },
+      "Input_company_social_profile_finder": {
+        "title": "Crosswalk input",
+        "type": "object",
+        "properties": {
+          "queries": {
+            "title": "Identifiers to resolve",
+            "type": "array",
+            "description": "One per line. A website domain (acme.com), any organization or profile URL (https://www.instagram.com/acme, https://www.linkedin.com/company/acme), a prefixed handle (ig:acme, x:acme, tiktok:acme, yt:@acme, fb:acme, gh:acme), a Google Maps place ID (ChIJ\u2026), an SEC CIK/ticker (cik:320193, ticker:NET), an LEI \u2014 or a company name, optionally with a location (\"Acme Plumbing, Toronto\"). Names resolve only when exactly one candidate is unambiguous; otherwise you get a ranked `candidates` row (free) to pick from. Organizations and places only \u2014 people are refused.",
+            "minItems": 0,
+            "maxItems": 5000
+          },
+          "query": {
+            "title": "Single identifier",
+            "type": "string",
+            "description": "One identifier or company name (for agents, Zapier/Make steps, quick checks). Output defaults to compact for a single query.",
+            "nullable": true
+          },
+          "inputDatasetId": {
+            "title": "Enrich a dataset (on-ramp)",
+            "type": "string",
+            "description": "ID of any dataset \u2014 a Google Maps, LinkedIn jobs or company-scraper run, or an uploaded CSV. Each row's website field is resolved and the result is attached to the row as `crosswalk`; all original fields pass through. Leave `queries` empty when using this.",
+            "nullable": true
+          },
+          "domainField": {
+            "title": "Website field in that dataset",
+            "type": "string",
+            "description": "Auto-detected (website, websiteUrl, companyUrl, url, domain, homepage\u2026) when empty.",
+            "nullable": true
+          },
+          "maxRows": {
+            "title": "Max rows to enrich",
+            "type": "integer",
+            "default": 5000,
+            "minimum": 1,
+            "maximum": 100000,
+            "description": "Maximum number of dataset rows to enrich in one run when inputDatasetId is set."
+          },
+          "outputFormat": {
+            "title": "Output format",
+            "type": "string",
+            "description": "auto (default): compact for a single `query`, full for batches and datasets. compact: flat record with ids, urls, confidence and a verified flag \u2014 best for tool calls and spreadsheets. full: complete record with the evidence trail per link.",
+            "enum": [
+              "auto",
+              "compact",
+              "full"
+            ],
+            "x-enumTitles": [
+              "Auto (compact for one query, full for batches)",
+              "Compact",
+              "Full (with evidence)"
+            ],
+            "default": "auto"
+          },
+          "mode": {
+            "title": "Mode",
+            "type": "string",
+            "description": "resolve: resolve the queries (default). healthcheck: run the canary set and FAIL the run on degradation (schedule hourly; wire an alert to run failure). reverify: re-resolve slice k of n of the graph with change events (schedule daily). export: dump the whole graph to the dataset (no charges). forget: purge the organizations in forgetIds. buildSecIndex: build the SEC ticker/CIK \u2194 domain index used to enrich public companies (run monthly). seed: pre-resolve organizations (list / SEC / Wikidata) so first-touch lookups are served from the graph (still billed as entity-resolved). healthcheck / reverify / seed / buildSecIndex: publisher maintenance; not for buyer runs. export / forget: normal buyer/ops.",
+            "enum": [
+              "resolve",
+              "healthcheck",
+              "reverify",
+              "export",
+              "forget",
+              "buildSecIndex",
+              "seed"
+            ],
+            "x-enumTitles": [
+              "Resolve queries / enrich dataset",
+              "Healthcheck (canaries); publisher maintenance; not for buyer runs",
+              "Re-verify graph slice; publisher maintenance; not for buyer runs",
+              "Export graph",
+              "Forget / purge",
+              "Build SEC index; publisher maintenance; not for buyer runs",
+              "Seed the graph; publisher maintenance; not for buyer runs"
+            ],
+            "default": "resolve"
+          },
+          "probeMode": {
+            "title": "Verification depth",
+            "type": "string",
+            "description": "direct (default): free public endpoints only; Instagram/Facebook links are reported as not_attempted unless enableChildProbes is true. The listed Store price covers this path and excludes optional child probes. auto / actors (experimental, untested by us): Instagram and Facebook confirmation starts official Store child Actors only when enableChildProbes is true; the buyer pays those Store Actor charges (we do not absorb them). Historical lift of probe vs direct is \u2248 0%. actors: confirm every platform through Store Actors (buyer-paid child charges; Instagram/Facebook still require enableChildProbes). declared: read the organization's website only.",
+            "enum": [
+              "auto",
+              "direct",
+              "actors",
+              "declared"
+            ],
+            "x-enumTitles": [
+              "Auto \u2014 experimental Store Actor probes (buyer pays child IG/FB charges)",
+              "Direct \u2014 free endpoints only (default)",
+              "Actors \u2014 experimental; Store Actors for every platform (buyer pays)",
+              "Declared \u2014 website only"
+            ],
+            "default": "direct"
+          },
+          "enableChildProbes": {
+            "title": "Enable Instagram/Facebook child probes",
+            "type": "boolean",
+            "description": "When true, Instagram/Facebook Store Actors run on the user's account at those Actors' own rates; default off so listed Crosswalk price is the true price without child spend.",
+            "default": false
+          },
+          "maxChildRuns": {
+            "title": "Max child runs",
+            "type": "integer",
+            "default": 2,
+            "minimum": 0,
+            "maximum": 2,
+            "description": "Max Instagram/Facebook child runs that reached RUNNING in this parent run (one batched Instagram call plus one batched Facebook call). A start failure does not count. Default 2."
+          },
+          "maxChildCostUsd": {
+            "title": "Max child cost (USD)",
+            "type": "number",
+            "default": 1,
+            "minimum": 0,
+            "description": "Stop starting further Instagram/Facebook children when read-back charged USD reaches this amount. Default 1.00. Each child Actor.call also sets maxTotalChargeUsd to min(0.25, remaining budget)."
+          },
+          "actorProbesPerEntity": {
+            "title": "Actor probes per organization",
+            "type": "integer",
+            "default": 2,
+            "minimum": 0,
+            "maximum": 10,
+            "description": "Cap on Store-Actor confirmations per organization. Instagram and Facebook count only when enableChildProbes is true (direct, auto, or actors). Instagram + Facebook = 2."
+          },
+          "actorProbesPerRun": {
+            "title": "Actor probes per run",
+            "type": "integer",
+            "default": 200,
+            "minimum": 0,
+            "maximum": 100000,
+            "description": "Hard cap on Store-Actor confirmations for the whole run; beyond it, links are reported as not_attempted. Keeps sub-run spend predictable."
+          },
+          "maxProbesPerEntity": {
+            "title": "Max platform probes per entity",
+            "type": "integer",
+            "description": "Upper bound on reverse-confirmation requests made for one organization. Keeps cost predictable in actors mode.",
+            "default": 8,
+            "minimum": 0,
+            "maximum": 40
+          },
+          "cacheTtlDays": {
+            "title": "Cache freshness (days)",
+            "type": "integer",
+            "description": "A cached record younger than this is returned without re-resolving and billed as entity-resolved. Set 0 to always re-resolve.",
+            "default": 30,
+            "minimum": 0,
+            "maximum": 365
+          },
+          "forceRefresh": {
+            "title": "Force refresh",
+            "type": "boolean",
+            "description": "Ignore the cache and re-resolve every query. Identity-change events are still computed against the cached record.",
+            "default": false
+          },
+          "emitChangeEvents": {
+            "title": "Emit identity-change events",
+            "type": "boolean",
+            "description": "When a re-resolved organization differs from its cached record (new domain, moved handle, closed place, rebrand), push an identity_change row.",
+            "default": true
+          },
+          "graphStoreName": {
+            "title": "Graph store name",
+            "type": "string",
+            "description": "Named key-value store in your account that holds the identity graph. Leave empty to use crosswalk-graph-<this Actor's ID>, so every run of this Actor compounds the same graph."
+          },
+          "sharedGraphStoreId": {
+            "title": "Shared graph store (advanced)",
+            "type": "string",
+            "description": "ID of the publisher's public, pre-seeded graph store. Reads fall through to it, so well-known companies resolve from the shared graph (billed as entity-resolved). Defaults to the store the publisher configured; leave empty unless you run your own fork.",
+            "nullable": true
+          },
+          "confidentThreshold": {
+            "title": "Confident-link threshold",
+            "type": "number",
+            "description": "Links at or above this confidence count as confident. Links below are still returned, flagged low confidence, and never charged.",
+            "default": 0.8,
+            "minimum": 0.5,
+            "maximum": 1
+          },
+          "probeActors": {
+            "title": "Actor probes (advanced)",
+            "type": "object",
+            "description": "Only used when a Store Actor confirms a platform (auto/actors, or Instagram/Facebook when enableChildProbes is true). Maps a platform key to the Actor and how to read its output. Defaults (apify/instagram-profile-scraper, apify/facebook-pages-scraper, harvestapi/linkedin-company, clockworks/tiktok-profile-scraper, apidojo/twitter-user-scraper, compass/crawler-google-places) live in src/platforms.js; override here without a code change. Shape: { \"instagram\": { \"actorId\": \"...\", \"input\": { \"usernames\": [\"{{id}}\"] }, \"externalUrlField\": [\"externalUrl\",\"externalUrls\"], \"nameField\": \"fullName\", \"bioField\": \"biography\" } }",
+            "default": {}
+          },
+          "proxyConfiguration": {
+            "title": "Proxy",
+            "type": "object",
+            "description": "Proxy for website and direct-probe requests. Residential is rarely needed; the hub method reads the organization's own site.",
+            "default": {}
+          },
+          "requestTimeoutSecs": {
+            "title": "Request timeout (seconds)",
+            "type": "integer",
+            "default": 20,
+            "minimum": 5,
+            "maximum": 120,
+            "description": "HTTP request timeout in seconds for website and platform fetches."
+          },
+          "maxConcurrency": {
+            "title": "Max concurrent resolutions",
+            "type": "integer",
+            "default": 5,
+            "minimum": 1,
+            "maximum": 25,
+            "description": "Maximum number of organizations resolved in parallel."
+          },
+          "renderFallbackActor": {
+            "title": "Render fallback Actor (advanced)",
+            "type": "string",
+            "description": "For JavaScript-only websites. A Store Actor that returns rendered HTML in an `html` field for a `url` input (e.g. apify/web-fetch). Sub-runs bill to you. Leave empty to diagnose JS-only sites instead.",
+            "nullable": true
+          },
+          "seedTimeoutSecs": {
+            "title": "Per-query timeout (seconds)",
+            "type": "integer",
+            "default": 120,
+            "minimum": 20,
+            "maximum": 900,
+            "description": "One slow organization never stalls the run; abandoned queries get a `seed_timeout` diagnostic and are not charged."
+          },
+          "perHostPerSecond": {
+            "title": "Politeness: requests per second per host",
+            "type": "number",
+            "default": 2,
+            "minimum": 0.2,
+            "maximum": 10,
+            "description": "Maximum requests per second to any single host (politeness limiter)."
+          },
+          "respectRobots": {
+            "title": "Respect robots.txt on organization websites",
+            "type": "boolean",
+            "default": true,
+            "description": "When a site's robots.txt disallows reading, Crosswalk reports `website_robots_denied` instead of reading it."
+          },
+          "forgetIds": {
+            "title": "Forget: identifiers or canonicalIds to purge",
+            "type": "array",
+            "description": "forget mode only. Domains, platform URLs or org_\u2026 ids. Removes the record, its history and all indexes.",
+            "default": []
+          },
+          "probeConcurrency": {
+            "title": "Parallel probes per organization",
+            "type": "integer",
+            "default": 4,
+            "minimum": 1,
+            "maximum": 8,
+            "description": "How many platform probes to run in parallel for one organization."
+          },
+          "wikidataDeclared": {
+            "title": "Use Wikidata as a second declared source",
+            "type": "boolean",
+            "default": true,
+            "description": "Wikidata's human-curated social properties for the organization whose official website is this domain are added as declared links (0.85) and still platform-verified. Independent of the website, so JS-only footers and robots-denied sites still resolve."
+          },
+          "reverifySlice": {
+            "title": "Maintenance: Re-verify: slice index",
+            "type": "integer",
+            "default": 0,
+            "minimum": 0,
+            "maximum": 999,
+            "description": "reverify mode only. Which slice (0..slices-1) to re-resolve today. Schedule with a rotating value or use a daily task per slice.; publisher maintenance; not for buyer runs"
+          },
+          "reverifySlices": {
+            "title": "Maintenance: Re-verify: number of slices",
+            "type": "integer",
+            "default": 30,
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "How many deterministic slices to partition the graph into for reverify mode.; publisher maintenance; not for buyer runs"
+          },
+          "reverifyLimit": {
+            "title": "Maintenance: Re-verify: max organizations per run",
+            "type": "integer",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 20000,
+            "description": "Maximum number of organizations to re-verify in one run.; publisher maintenance; not for buyer runs"
+          },
+          "seedSource": {
+            "title": "Maintenance: Seed: source",
+            "type": "string",
+            "description": "seed mode only. list = seedDomains; sec = domains from the SEC index; wikidata = organizations with an official website (paged, resumable).; publisher maintenance; not for buyer runs",
+            "enum": [
+              "list",
+              "sec",
+              "wikidata"
+            ],
+            "default": "list"
+          },
+          "seedDomains": {
+            "title": "Maintenance: Seed: domains (list source)",
+            "type": "array",
+            "default": [],
+            "description": "Explicit list of domains to seed when seedSource is list.; publisher maintenance; not for buyer runs"
+          },
+          "seedLimit": {
+            "title": "Maintenance: Seed: organizations per run",
+            "type": "integer",
+            "default": 2000,
+            "minimum": 1,
+            "maximum": 50000,
+            "description": "Maximum number of organizations to seed in one run.; publisher maintenance; not for buyer runs"
+          }
+        }
+      },
+      "Input_sports_odds_api": {
+        "title": "Kambi sportsbook odds",
+        "type": "object",
+        "properties": {
+          "leagues": {
+            "title": "Leagues or sports",
+            "type": "array",
+            "description": "Kambi paths, sport or league level: \"basketball/nba\", \"american_football/nfl\", \"ice_hockey/nhl\", \"baseball/mlb\", \"football/england/premier_league\", or a whole sport such as \"tennis\". Unknown paths are answered with suggestions and are never charged.",
+            "default": [
+              "basketball/nba",
+              "american_football/nfl",
+              "ice_hockey/nhl",
+              "baseball/mlb",
+              "football/england/premier_league"
+            ]
+          },
+          "operators": {
+            "title": "Sportsbooks",
+            "type": "array",
+            "description": "Kambi-powered books to price. Each book is a separate brand/jurisdiction feed; prices can differ between them. The list contains only books verified open on the date in the README.",
+            "items": {
+              "type": "string",
+              "enum": [
+                "rsiusnj",
+                "rsiusny",
+                "rsiuspa",
+                "rsiusil",
+                "rsiusin",
+                "rsiusco",
+                "rsiusmi",
+                "rsiusaz",
+                "rsiusla",
+                "rsiusmd",
+                "rsiusoh",
+                "rsiuswv",
+                "rsicaon",
+                "ubuk",
+                "ubca",
+                "ubse",
+                "ubdk",
+                "ubbe",
+                "ubnl",
+                "ubro",
+                "paf",
+                "pafes",
+                "svenskaspel",
+                "atg"
+              ],
+              "x-enumTitles": [
+                "BetRivers \u2014 US-NJ (rsiusnj)",
+                "BetRivers \u2014 US-NY (rsiusny)",
+                "BetRivers \u2014 US-PA (rsiuspa)",
+                "BetRivers \u2014 US-IL (rsiusil)",
+                "BetRivers \u2014 US-IN (rsiusin)",
+                "BetRivers \u2014 US-CO (rsiusco)",
+                "BetRivers \u2014 US-MI (rsiusmi)",
+                "BetRivers \u2014 US-AZ (rsiusaz)",
+                "BetRivers \u2014 US-LA (rsiusla)",
+                "BetRivers \u2014 US-MD (rsiusmd)",
+                "BetRivers \u2014 US-OH (rsiusoh)",
+                "BetRivers \u2014 US-WV (rsiuswv)",
+                "BetRivers \u2014 CA-ON (rsicaon)",
+                "Unibet \u2014 GB (ubuk)",
+                "Unibet \u2014 CA-ON (ubca)",
+                "Unibet \u2014 SE (ubse)",
+                "Unibet \u2014 DK (ubdk)",
+                "Unibet \u2014 BE (ubbe)",
+                "Unibet \u2014 NL (ubnl)",
+                "Unibet \u2014 RO (ubro)",
+                "Paf \u2014 FI (paf)",
+                "Paf \u2014 ES (pafes)",
+                "Svenska Spel \u2014 SE (svenskaspel)",
+                "ATG \u2014 SE (atg)"
+              ]
+            },
+            "default": [
+              "rsiusnj",
+              "rsiusny",
+              "rsiuspa",
+              "rsicaon",
+              "ubuk",
+              "ubca",
+              "paf",
+              "svenskaspel",
+              "atg"
+            ]
+          },
+          "markets": {
+            "title": "Markets",
+            "type": "string",
+            "enum": [
+              "main",
+              "all"
+            ],
+            "x-enumTitles": [
+              "Main lines (moneyline, spread, total)",
+              "Every market incl. player props and alternates"
+            ],
+            "description": "\"main\" returns the headline markets per game. \"all\" returns each game's full board (often 300\u2013500 markets) and is priced higher.",
+            "default": "main"
+          },
+          "includeLive": {
+            "title": "Include in-play games",
+            "type": "boolean",
+            "description": "Include games already started (live prices at the moment of the run).",
+            "default": true
+          },
+          "startsWithinHours": {
+            "title": "Only games starting within (hours)",
+            "type": "integer",
+            "minimum": 0,
+            "description": "0 = no limit. Live games are kept when \"Include in-play games\" is on.",
+            "default": 0
+          },
+          "maxEvents": {
+            "title": "Max games",
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 1000,
+            "description": "Soonest games first. You pay per game returned.",
+            "default": 50
+          },
+          "proxyConfiguration": {
+            "title": "Proxy (optional)",
+            "type": "object",
+            "description": "On by default. Kambi limits how often one IP may ask; your run moves to a fresh Apify Proxy IP whenever it is slowed down. Turn off only to test without a proxy.",
+            "default": {}
+          }
+        }
+      },
+      "Input_eu_ted_notices_scraper": {
+        "title": "EU TED Notices Scraper",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords (full-text)",
+            "type": "string",
+            "description": "Optional. Mapped to TED expert-search FT~\"\u2026\" full-text. Ignored if expertQuery is set."
+          },
+          "expertQuery": {
+            "title": "Expert query (advanced)",
+            "type": "string",
+            "description": "Optional raw TED Expert Search expression. When set, overrides keywords / dates / noticeType / cpv / buyerCountry filters (you must include SORT BY yourself if desired). Example: buyer-country=DEU AND PD>=20260101 SORT BY publication-date DESC"
+          },
+          "publicationDateFrom": {
+            "title": "Publication date from (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Default: 14 days ago. Converted to TED PD>=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "publicationDateTo": {
+            "title": "Publication date to (YYYY-MM-DD)",
+            "type": "string",
+            "description": "Optional. Converted to TED PD<=YYYYMMDD. Ignored if expertQuery is set."
+          },
+          "noticeType": {
+            "title": "Notice type",
+            "type": "string",
+            "description": "Optional eForms notice-type filter (e.g. cn-standard, can-standard, pin-only, pin-cfc-standard). Ignored if expertQuery is set."
+          },
+          "cpv": {
+            "title": "CPV code",
+            "type": "string",
+            "description": "Optional Common Procurement Vocabulary code (e.g. 72000000). Mapped to classification-cpv. Ignored if expertQuery is set."
+          },
+          "buyerCountry": {
+            "title": "Buyer country (ISO3)",
+            "type": "string",
+            "description": "Optional ISO 3166-1 alpha-3 buyer country (e.g. DEU, FRA, NLD). Mapped to buyer-country. Ignored if expertQuery is set."
+          },
+          "scope": {
+            "title": "Search scope",
+            "type": "string",
+            "description": "TED scope: ALL (archive) or ACTIVE (currently open). Default ALL.",
+            "enum": [
+              "ALL",
+              "ACTIVE"
+            ],
+            "default": "ALL"
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Maximum notice rows to push to the default dataset.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      },
+      "Input_smartrecruiters_jobs_scraper": {
+        "title": "SmartRecruiters Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "SmartRecruiters company identifiers",
+            "type": "array",
+            "description": "The identifier in the careers URL: https://jobs.smartrecruiters.com/<identifier>. One per line, or paste the URLs. Note: SmartRecruiters answers an unknown identifier with an empty list, so check spelling if you get zero postings."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting. SmartRecruiters needs one extra request per returned posting for this.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      },
+      "Input_ashby_jobs_scraper": {
+        "title": "Ashby Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "Ashby job board names",
+            "type": "array",
+            "description": "The name in the board URL: https://jobs.ashbyhq.com/<name>. One per line, or paste the URLs."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      },
+      "Input_lever_jobs_scraper": {
+        "title": "Lever Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "Lever site names",
+            "type": "array",
+            "description": "The site name in the board URL: https://jobs.lever.co/<site>. One per line, or paste the URLs."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      },
+      "Input_greenhouse_jobs_scraper": {
+        "title": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
+        "type": "object",
+        "properties": {
+          "companies": {
+            "title": "Greenhouse board tokens",
+            "type": "array",
+            "description": "The token in the board URL: https://boards.greenhouse.io/<token> or https://job-boards.greenhouse.io/<token>. One per line, or paste the URLs."
+          },
+          "since": {
+            "title": "Since",
+            "type": "string",
+            "description": "Return only postings published on or after this point. A window like 24h, 7d, 2w, or an ISO date/time such as 2026-09-01 or 2026-09-01T10:00:00Z. Leave empty for every open posting."
+          },
+          "maxResults": {
+            "title": "Max results",
+            "type": "integer",
+            "description": "Cap on postings returned across all companies, newest first. Each returned posting is one billable result.",
+            "default": 500,
+            "minimum": 1,
+            "maximum": 100000
+          },
+          "includeDescription": {
+            "title": "Include description",
+            "type": "boolean",
+            "description": "Add the plain-text job description to every posting.",
+            "default": false
+          }
+        },
+        "required": [
+          "companies"
+        ]
+      },
+      "Input_govcon_opportunity_feed": {
+        "title": "GovCon Opportunity Feed input",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "title": "Mode",
+            "type": "string",
+            "enum": [
+              "monitor",
+              "snapshot",
+              "enrich",
+              "rehashState"
+            ],
+            "default": "monitor",
+            "description": "snapshot (Store QA prefill): serve matching opportunities from the published HF snapshot. monitor: serve HF delta events with eventDate >= since (near-$0 on a quiet window). enrich: snapshot plus future incumbent overlays (deferred in 0.1.32). rehashState: no-op on the public Actor (stateless; private producer only)."
+          },
+          "sources": {
+            "title": "Sources",
+            "type": "array",
+            "default": [
+              "sam",
+              "grants"
+            ],
+            "items": {
+              "type": "string"
+            },
+            "description": "Allowed values: sam, grants. SAM defaults to daily Data Services CSV (samBulk=true, no key). Grants.gov needs no key."
+          },
+          "samApiKey": {
+            "title": "SAM.gov API key",
+            "type": "string",
+            "description": "Optional when samBulk=true. Required only for API enrich (resourceLinks) / monitor checks / samBulk=false. Personal public API key from sam.gov (Account Details \u2192 Request API Key). Free. Stored encrypted; never logged.",
+            "format": "password",
+            "writeOnly": true
+          },
+          "naics": {
+            "title": "NAICS codes",
+            "type": "array",
+            "default": [],
+            "description": "6-digit or prefix, e.g. 541512 or 5415."
+          },
+          "agencies": {
+            "title": "Agencies",
+            "type": "array",
+            "default": [],
+            "description": "Names or codes, e.g. Department of Defense, DHS, EPA."
+          },
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "default": [],
+            "description": "Free-text keywords matched against opportunity titles."
+          },
+          "setAside": {
+            "title": "Set-aside types",
+            "type": "array",
+            "default": [],
+            "description": "SB, 8A, HUBZone, SDVOSB, WOSB, NONE"
+          },
+          "states": {
+            "title": "Place of performance states",
+            "type": "array",
+            "default": [],
+            "description": "Two-letter US state codes for place of performance (contracts)."
+          },
+          "noticeTypes": {
+            "title": "Notice types",
+            "type": "array",
+            "default": [],
+            "description": "Filter by notice type, e.g. solicitation, award_notice, grant_posted."
+          },
+          "postedWithinDays": {
+            "title": "Posted within N days",
+            "type": "integer",
+            "default": 14,
+            "minimum": 1,
+            "maximum": 365,
+            "description": "Only include opportunities posted within the last N days. Declared product default is **14 days** (Thursday product window). Schedules and Store listing align to 14d; raise if you need a longer lookback (PPE scales with matches)."
+          },
+          "deadlineAfter": {
+            "title": "Deadline after",
+            "type": "string",
+            "description": "Defaults to today; excludes expired opportunities."
+          },
+          "since": {
+            "title": "Since date",
+            "type": "string",
+            "description": "ET calendar date (YYYY-MM-DD) or RFC3339. Selects HF delta shards with eventDate >= since. Optional for snapshot (serves latest snapshot). For monitor, defaults to a 7-day lookback ending at the latest published delta date."
+          },
+          "includeDescriptions": {
+            "title": "Include full descriptions",
+            "type": "boolean",
+            "default": false,
+            "description": "When true, fetch full grant synopses (slower)."
+          },
+          "includeContacts": {
+            "title": "Include official contacts",
+            "type": "boolean",
+            "default": false,
+            "description": "When true, include SAM point-of-contact fields."
+          },
+          "enrichTopN": {
+            "title": "Incumbents per opportunity (enrich mode)",
+            "type": "integer",
+            "default": 5,
+            "minimum": 1,
+            "maximum": 20,
+            "description": "Category leaders (or predecessors) per opportunity in enrich mode."
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "default": 10000,
+            "minimum": 1,
+            "maximum": 50000,
+            "description": "Hard cap on opportunity rows returned (and billed) after sort by postedDate desc \u2192 Sol#. Default 10000. Schema maximum 50000 so a buyer can opt into covering a full Active+14d/30d window (they pay PPE for what they take). Under the default 14d window, Active matches often exceed 10k \u2014 runs emit CAP_TRUNCATED + CAP_COVERAGE.covered/total (never silent). Cap always drops the oldest rows."
+          },
+          "samBulk": {
+            "title": "Use SAM Data Services daily CSV (bulk)",
+            "type": "boolean",
+            "default": true,
+            "description": "Ignored on the public Actor (v1.2 HF serve). Retained for input compatibility; private producer uses SAM Data Services CSV."
+          },
+          "samEnrichLimit": {
+            "title": "SAM API enrich budget",
+            "type": "integer",
+            "default": 5,
+            "minimum": 0,
+            "maximum": 50,
+            "description": "Ignored on the public Actor (v1.2 HF serve). Retained for input compatibility."
+          },
+          "incumbentMode": {
+            "title": "Enrich join mode",
+            "type": "string",
+            "enum": [
+              "category_leaders",
+              "predecessor"
+            ],
+            "default": "category_leaders",
+            "description": "category_leaders (default): top USASpending recipients by agency\u00d7NAICS. predecessor: true prior-awardee/recompete join (stub until PREDECESSOR_JOIN.md ships). Proof schedules must keep default."
+          }
+        }
+      },
+      "Input_grants_gov_scraper": {
+        "title": "Grants.gov Opportunities Scraper",
+        "description": "Public Grants.gov search2 API. No API key. Response token/accessKey are ignored. Server date filter: postedWithinDays \u2192 dateRange. open/close date fields are client-side (API does not support custom MM/DD ranges).",
+        "type": "object",
+        "properties": {
+          "keyword": {
+            "title": "Keyword",
+            "type": "string",
+            "description": "Search keyword (e.g. education, cybersecurity). Leave empty for all.",
+            "default": ""
+          },
+          "agency": {
+            "title": "Agency",
+            "type": "string",
+            "description": "Mapped to API body agencies (e.g. HHS, EPA, NSF).",
+            "default": "",
+            "nullable": true
+          },
+          "status": {
+            "title": "Opportunity status",
+            "type": "string",
+            "description": "Mapped to API oppStatuses. Use forecasted|posted|closed|archived or pipe-joined.",
+            "default": "forecasted|posted"
+          },
+          "postedWithinDays": {
+            "title": "Posted within N days",
+            "type": "integer",
+            "description": "Server-side filter mapped to search2 dateRange (posted-date lookback). Verified values: 3,7,14,21,28,35,42,49,56,90,180,365. Omit for no posted-date filter.",
+            "minimum": 1,
+            "maximum": 3650,
+            "nullable": true
+          },
+          "openDateFrom": {
+            "title": "Open date from",
+            "type": "string",
+            "description": "Client-side filter on openDate. Accepts MM/DD/YYYY or YYYY-MM-DD. Inclusive.",
+            "nullable": true
+          },
+          "openDateTo": {
+            "title": "Open date to",
+            "type": "string",
+            "description": "Client-side filter on openDate. Inclusive.",
+            "nullable": true
+          },
+          "closeDateFrom": {
+            "title": "Close date from",
+            "type": "string",
+            "description": "Client-side filter on closeDate. Inclusive. Useful for 'still open' windows.",
+            "nullable": true
+          },
+          "closeDateTo": {
+            "title": "Close date to",
+            "type": "string",
+            "description": "Client-side filter on closeDate. Inclusive.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on opportunity rows (deduped by opportunityId).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          },
+          "fetchDetails": {
+            "title": "Fetch opportunity details",
+            "type": "boolean",
+            "description": "Hydrate synopsis via fetchOpportunity. Still one PPE charge per opportunity.",
+            "default": false
+          }
+        }
+      },
+      "Input_uk_find_a_tender_scraper": {
+        "title": "UK Find a Tender Scraper",
+        "description": "Public OCDS 1.1 packages from Find a Tender. Keywords and CPV are applied client-side after flatten.",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Case-insensitive match on tender title, description, or buyer name (client-side).",
+            "default": []
+          },
+          "cpv": {
+            "title": "CPV codes",
+            "type": "array",
+            "description": "Match when tender.items[].classification.id starts with any code (client-side).",
+            "default": []
+          },
+          "noticeType": {
+            "title": "Notice stages",
+            "type": "array",
+            "description": "Mapped to API stages: planning | tender | award. Omit for all.",
+            "default": []
+          },
+          "updatedFrom": {
+            "title": "Updated from",
+            "type": "string",
+            "description": "ISO datetime. Default: 7 days ago.",
+            "nullable": true
+          },
+          "updatedTo": {
+            "title": "Updated to",
+            "type": "string",
+            "description": "ISO datetime. Default: now.",
+            "nullable": true
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on notice rows.",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      },
+      "Input_usaspending_awards_scraper": {
+        "title": "USASpending Awards Scraper",
+        "description": "Public USASpending.gov spending_by_award API. Defaults to recent contracts/IDVs (A\u2013D) over the last 30 days. Emphasize agency / recipient / date filters.",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Mapped to filters.keywords. Leave empty for broad recent awards; prefer agency/recipient/date.",
+            "default": []
+          },
+          "naics": {
+            "title": "NAICS codes",
+            "type": "array",
+            "description": "Mapped to filters.naics_codes.",
+            "default": []
+          },
+          "agency": {
+            "title": "Awarding agency (toptier name)",
+            "type": "string",
+            "description": "Toptier awarding agency name \u2192 filters.agencies[{type:awarding,tier:toptier,name}]. Example: Department of Defense.",
+            "default": "",
+            "nullable": true
+          },
+          "recipient": {
+            "title": "Recipient name",
+            "type": "string",
+            "description": "Mapped to filters.recipient_search_text (array). Example: Boeing. Verified shape requires an array of strings.",
+            "default": "",
+            "nullable": true
+          },
+          "awardTypes": {
+            "title": "Award type codes",
+            "type": "array",
+            "description": "Default A,B,C,D (contracts/IDVs). Avoid assistance codes that may list individuals.",
+            "default": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+          },
+          "startDate": {
+            "title": "Start date",
+            "type": "string",
+            "description": "YYYY-MM-DD. Default: today \u2212 30 days (recent awards window).",
+            "nullable": true
+          },
+          "endDate": {
+            "title": "End date",
+            "type": "string",
+            "description": "YYYY-MM-DD. Default: today.",
+            "nullable": true
+          },
+          "subawards": {
+            "title": "Subawards mode",
+            "type": "boolean",
+            "description": "Pass subawards flag to search (default false).",
+            "default": false
+          },
+          "fetchDetails": {
+            "title": "Fetch award details",
+            "type": "boolean",
+            "description": "Hydrate via GET /awards/{generated_internal_id}/. Still one PPE charge.",
+            "default": false
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on award rows (deduped by awardId|generatedInternalId).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      },
+      "Input_calibration_ledger": {
+        "title": "Calibration Ledger input",
+        "type": "object",
+        "properties": {
+          "mode": {
+            "title": "Mode",
+            "type": "string",
+            "default": "text",
+            "enum": [
+              "text",
+              "lookup",
+              "score",
+              "compare",
+              "issuer",
+              "coverage",
+              "verify"
+            ],
+            "x-enumTitles": [
+              "Text: any claim in words",
+              "Lookup: a live number by source/series/geo/period",
+              "Score: a source's record on a series",
+              "Compare: rank sources on one question",
+              "Issuer: an issuer's promise-keeping record",
+              "Coverage: what the ledger can answer",
+              "Verify: provenance of a claim id"
+            ],
+            "description": "text = hand it a sentence (\"The IMF expects Canada's economy to grow 1.8% in 2027\"). lookup/score/compare use structured fields."
+          },
+          "claim_text": {
+            "title": "Claim (text mode)",
+            "type": "string",
+            "description": "Free-text claim for text mode (e.g. \"The IMF expects Canada's economy to grow 1.8% in 2027\")."
+          },
+          "source": {
+            "title": "Source organization",
+            "type": "string",
+            "description": "imf_weo | oecd_eo | fed_sep | spf | ecb_spf | pbo, or an issuer name; optional in text mode"
+          },
+          "series": {
+            "title": "Series",
+            "type": "string",
+            "enum": [
+              "CORE_INFL_A",
+              "CORE_PCE_INFL",
+              "CPI_INFL",
+              "CURRENT_ACCOUNT_PCTGDP",
+              "EMPLOY_GROWTH_A",
+              "FEDFUNDS",
+              "GDP_DEFLATOR_A",
+              "GOV_BALANCE_PCTGDP",
+              "GOV_GROSS_DEBT_PCTGDP",
+              "HICP_INFL_M",
+              "LONG_RATE",
+              "NGDP_GROWTH_Q",
+              "PCE_INFL",
+              "PGDP_INFL_Q",
+              "RCONSUM_GROWTH_A",
+              "RCONSUM_GROWTH_Q",
+              "REXPORT_GROWTH_A",
+              "RGDP_GROWTH_A",
+              "RGDP_GROWTH_Q",
+              "RIMPORT_GROWTH_A",
+              "RINVEST_GROWTH_A",
+              "RNRESIN_GROWTH_Q",
+              "RRESINV_GROWTH_Q",
+              "SHORT_RATE",
+              "UNEMP_RATE",
+              "UNEMP_RATE_M"
+            ],
+            "description": "Generated from rules.yaml \u2014 every series the ledger resolves."
+          },
+          "geo": {
+            "title": "Geography (ISO3 / EA / USA)",
+            "type": "string",
+            "description": "ISO3 country code, EA, or USA. Required for most score/lookup/compare calls."
+          },
+          "target_period": {
+            "title": "Target period (YYYY, YYYYQn, YYYY-MM)",
+            "type": "string",
+            "description": "Target period as YYYY, YYYYQn, or YYYY-MM when looking up a specific claim."
+          },
+          "point": {
+            "title": "Claimed value",
+            "type": "string",
+            "description": "Numeric claimed value for lookup mode (string so decimals stay exact)."
+          },
+          "published_at": {
+            "title": "Claim date (YYYY-MM-DD)",
+            "type": "string",
+            "description": "When the claim was published (YYYY-MM-DD), for lookup/verify."
+          },
+          "horizon_bucket": {
+            "title": "Horizon bucket",
+            "type": "string",
+            "enum": [
+              "0-4m",
+              "4-9m",
+              "9-15m",
+              "15-24m",
+              "24-36m",
+              "36m+"
+            ],
+            "description": "Optional horizon bucket filter for score mode."
+          },
+          "band_kind": {
+            "title": "Band kind (score mode)",
+            "type": "string",
+            "enum": [
+              "central_tendency",
+              "range"
+            ],
+            "description": "For Fed SEP score mode: central_tendency or range."
+          },
+          "claim_id": {
+            "title": "Claim id (verify mode)",
+            "type": "string",
+            "description": "Ledger claim id for verify mode."
+          },
+          "issuer": {
+            "title": "Issuer (issuer mode)",
+            "type": "string",
+            "description": "Organization name as it appears on its releases/filings (e.g. Salesforce Inc). Both records are returned: dated promises (newswires) and numeric guidance (EDGAR)."
+          }
+        },
+        "required": [
+          "mode"
+        ]
+      }
+    }
+  },
+  "paths": {
+    "/acts/publicrecords~etsy-search-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_etsy_search_scraper",
+        "summary": "Run Etsy Scraper \u2014 Listings, Prices & Best Sellers and return results",
+        "description": "Scrape Etsy search results by keyword, category or market page: title, price, rating, reviews, Bestseller and Star Seller badges, ad flag and search rank.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_etsy_search_scraper"
+              },
+              "example": {
+                "queries": [
+                  "ceramic mug"
+                ],
+                "maxPages": 1,
+                "proxyConfiguration": {
+                  "useApifyProxy": true,
+                  "apifyProxyGroups": [
+                    "RESIDENTIAL"
+                  ],
+                  "apifyProxyCountry": "US"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~etsy-shop-velocity/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_etsy_shop_velocity",
+        "summary": "Run Etsy Shop Sales Tracker & Scraper and return results",
+        "description": "Track Etsy shop sales counters with this Etsy shop scraper: measured sales counts with the date each was read. One row per shop, pay per shop.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_etsy_shop_velocity"
+              },
+              "example": {
+                "shops": [
+                  "OrelCeramics",
+                  "Bestickend"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~legistar-meetings-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_legistar_meetings_scraper",
+        "summary": "Run Legistar City Council Minutes & Agendas: meetings, items and return results",
+        "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_legistar_meetings_scraper"
+              },
+              "example": {
+                "clients": [
+                  "seattle",
+                  "milwaukee",
+                  "madison",
+                  "oakland",
+                  "sanjose",
+                  "boston",
+                  "denver",
+                  "columbus"
+                ],
+                "dateFrom": "2026-09-20",
+                "dateTo": "2026-09-28",
+                "maxItems": 200,
+                "resource": "events"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~company-social-profile-finder/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_company_social_profile_finder",
+        "summary": "Run Company Website to LinkedIn & Social Media Links and return results",
+        "description": "Which social profiles belong to this company? Resolves a name, website or Google Maps listing to its LinkedIn, X, YouTube, Instagram and Facebook handles, with evidence. Instagram and Facebook are returned from the site on the default path, not platform-verified.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_company_social_profile_finder"
+              },
+              "example": {
+                "mode": "resolve",
+                "queries": [
+                  "apify.com"
+                ],
+                "probeMode": "direct"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~sports-odds-api/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_sports_odds_api",
+        "summary": "Run Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG and return results",
+        "description": "Live odds from 24 Kambi-powered sportsbooks in one call: BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG. One row per game with every book's price and the best price per outcome.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_sports_odds_api"
+              },
+              "example": {
+                "leagues": [
+                  "basketball/nba",
+                  "american_football/nfl",
+                  "ice_hockey/nhl",
+                  "baseball/mlb",
+                  "football/england/premier_league"
+                ],
+                "maxEvents": 10,
+                "proxyConfiguration": {
+                  "useApifyProxy": true
+                },
+                "operators": [
+                  "rsiusnj",
+                  "rsiusny",
+                  "rsiuspa",
+                  "rsicaon",
+                  "ubuk",
+                  "ubca",
+                  "paf",
+                  "svenskaspel",
+                  "atg"
+                ],
+                "markets": "main",
+                "includeLive": true,
+                "startsWithinHours": 0
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~eu-ted-notices-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_eu_ted_notices_scraper",
+        "summary": "Run TED Tenders Daily: EU procurement notices from Tenders and return results",
+        "description": "Which EU tenders were published today? Returns TED (Tenders Electronic Daily) notices with buyer, CPV, value, deadline and source link.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_eu_ted_notices_scraper"
+              },
+              "example": {
+                "publicationDateFrom": "2026-09-28",
+                "publicationDateTo": "2026-09-28",
+                "scope": "ALL",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~smartrecruiters-jobs-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_smartrecruiters_jobs_scraper",
+        "summary": "Run SmartRecruiters Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "description": "Scrape open jobs from any SmartRecruiters careers site and return only postings released since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_smartrecruiters_jobs_scraper"
+              },
+              "example": {
+                "companies": [
+                  "Ubisoft2",
+                  "smartrecruiters"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~ashby-jobs-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_ashby_jobs_scraper",
+        "summary": "Run Ashby Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_ashby_jobs_scraper"
+              },
+              "example": {
+                "companies": [
+                  "ramp",
+                  "linear"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~lever-jobs-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_lever_jobs_scraper",
+        "summary": "Run Lever Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "description": "Scrape open jobs from any Lever job board and return only postings created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_lever_jobs_scraper"
+              },
+              "example": {
+                "companies": [
+                  "veeva",
+                  "palantir"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~greenhouse-jobs-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_greenhouse_jobs_scraper",
+        "summary": "Run Greenhouse Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_greenhouse_jobs_scraper"
+              },
+              "example": {
+                "companies": [
+                  "gitlab",
+                  "cloudflare"
+                ],
+                "since": "30d",
+                "maxResults": 50,
+                "includeDescription": true
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~govcon-opportunity-feed/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_govcon_opportunity_feed",
+        "summary": "Run Federal Contract Opportunities: SAM.gov + Grants.gov in one and return results",
+        "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_govcon_opportunity_feed"
+              },
+              "example": {
+                "mode": "snapshot",
+                "sources": [
+                  "sam"
+                ],
+                "samBulk": true,
+                "samEnrichLimit": 0,
+                "naics": [
+                  "541512"
+                ],
+                "postedWithinDays": 14,
+                "maxItems": 25,
+                "includeDescriptions": false,
+                "includeContacts": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~grants-gov-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_grants_gov_scraper",
+        "summary": "Run Grants.gov Search API: federal grants list with deadlines and return results",
+        "description": "Which federal grants are open right now? Searches Grants.gov and returns opportunity, agency, deadline, eligibility and the source link.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_grants_gov_scraper"
+              },
+              "example": {
+                "status": "posted",
+                "maxItems": 200
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~uk-find-a-tender-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_uk_find_a_tender_scraper",
+        "summary": "Run Find a Tender & Contracts Finder: UK government tenders and return results",
+        "description": "Which UK government tenders were published today? Returns Find a Tender and Contracts Finder notices with buyer, value, deadline and source link.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_uk_find_a_tender_scraper"
+              },
+              "example": {
+                "noticeType": [
+                  "tender"
+                ],
+                "updatedFrom": "2026-09-28T00:00:00",
+                "maxItems": 100
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~usaspending-awards-scraper/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_usaspending_awards_scraper",
+        "summary": "Run USAspending API Awards: federal contract and grant awards and return results",
+        "description": "Who won federal contracts and grants, and for how much? Pulls USAspending awards by agency, recipient, NAICS and period, with award IDs and source links.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_usaspending_awards_scraper"
+              },
+              "example": {
+                "agency": "Department of Defense",
+                "awardTypes": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ],
+                "maxItems": 50
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/acts/publicrecords~calibration-ledger/run-sync-get-dataset-items": {
+      "post": {
+        "operationId": "runSync_calibration_ledger",
+        "summary": "Run Calibration Ledger \u2014 trust a forecast, with evidence (beta) and return results",
+        "description": "Given a claim from an organization (IMF, OECD, Fed/FOMC, SPF, ECB SPF, or a listed issuer), returns that organization's track record: error distribution, intervals, bias, band coverage, worst misses with source links \u2014 or honest 'no coverage' (free). Organizations only, never people.",
+        "parameters": [
+          {
+            "name": "timeout",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          },
+          {
+            "name": "maxItems",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            },
+            "required": false
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input_calibration_ledger"
+              },
+              "example": {
+                "mode": "lookup",
+                "source": "oecd_eo",
+                "series": "RGDP_GROWTH_A",
+                "geo": "CAN",
+                "target_period": "2027",
+                "point": "1.8",
+                "published_at": "2026-06-01"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Dataset items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

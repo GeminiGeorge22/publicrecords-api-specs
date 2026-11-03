@@ -1,0 +1,11 @@
+name: drift
+on:
+  schedule: [{ cron: "17 13 * * *" }]
+  workflow_dispatch:
+jobs:
+  drift:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Rebuild from live public Store data (tokenless) and fail on drift
+        run: python3 scripts/build.py && git diff --stat --exit-code openapi hosted postman composio

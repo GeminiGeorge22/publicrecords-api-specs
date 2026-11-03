@@ -1,0 +1,151 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "USAspending API Awards: federal contract and grant awards",
+    "version": "1.0.0",
+    "description": "Who won federal contracts and grants, and for how much? Pulls USAspending awards by agency, recipient, NAICS and period, with award IDs and source links.\n\nMore: https://apify.com/publicrecords/usaspending-awards-scraper"
+  },
+  "servers": [
+    {
+      "url": "https://publicrecords-api-gateway.publicrecords.workers.dev"
+    }
+  ],
+  "components": {
+    "schemas": {
+      "Input": {
+        "title": "USASpending Awards Scraper",
+        "description": "Public USASpending.gov spending_by_award API. Defaults to recent contracts/IDVs (A\u2013D) over the last 30 days. Emphasize agency / recipient / date filters.",
+        "type": "object",
+        "properties": {
+          "keywords": {
+            "title": "Keywords",
+            "type": "array",
+            "description": "Mapped to filters.keywords. Leave empty for broad recent awards; prefer agency/recipient/date.",
+            "default": []
+          },
+          "naics": {
+            "title": "NAICS codes",
+            "type": "array",
+            "description": "Mapped to filters.naics_codes.",
+            "default": []
+          },
+          "agency": {
+            "title": "Awarding agency (toptier name)",
+            "type": "string",
+            "description": "Toptier awarding agency name \u2192 filters.agencies[{type:awarding,tier:toptier,name}]. Example: Department of Defense.",
+            "default": "",
+            "nullable": true
+          },
+          "recipient": {
+            "title": "Recipient name",
+            "type": "string",
+            "description": "Mapped to filters.recipient_search_text (array). Example: Boeing. Verified shape requires an array of strings.",
+            "default": "",
+            "nullable": true
+          },
+          "awardTypes": {
+            "title": "Award type codes",
+            "type": "array",
+            "description": "Default A,B,C,D (contracts/IDVs). Avoid assistance codes that may list individuals.",
+            "default": [
+              "A",
+              "B",
+              "C",
+              "D"
+            ]
+          },
+          "startDate": {
+            "title": "Start date",
+            "type": "string",
+            "description": "YYYY-MM-DD. Default: today \u2212 30 days (recent awards window).",
+            "nullable": true
+          },
+          "endDate": {
+            "title": "End date",
+            "type": "string",
+            "description": "YYYY-MM-DD. Default: today.",
+            "nullable": true
+          },
+          "subawards": {
+            "title": "Subawards mode",
+            "type": "boolean",
+            "description": "Pass subawards flag to search (default false).",
+            "default": false
+          },
+          "fetchDetails": {
+            "title": "Fetch award details",
+            "type": "boolean",
+            "description": "Hydrate via GET /awards/{generated_internal_id}/. Still one PPE charge.",
+            "default": false
+          },
+          "maxItems": {
+            "title": "Max items",
+            "type": "integer",
+            "description": "Cap on award rows (deduped by awardId|generatedInternalId).",
+            "default": 50,
+            "minimum": 1,
+            "maximum": 5000
+          }
+        }
+      }
+    }
+  },
+  "paths": {
+    "/v1/usaspending-awards-scraper": {
+      "post": {
+        "operationId": "run_usaspending_awards_scraper",
+        "summary": "Run USAspending API Awards: federal contract and grant awards",
+        "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
+        "parameters": [
+          {
+            "name": "maxItems",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 1000
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Input"
+              },
+              "example": {
+                "agency": "Department of Defense",
+                "awardTypes": [
+                  "A",
+                  "B",
+                  "C",
+                  "D"
+                ],
+                "maxItems": 50
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Result rows",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad input"
+          }
+        }
+      }
+    }
+  }
+}
