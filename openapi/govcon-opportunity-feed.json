@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Federal Contract Opportunities: SAM.gov + Grants.gov in one",
-    "version": "0.1.51",
-    "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nRuns the Apify Actor publicrecords/govcon-opportunity-feed (https://apify.com/publicrecords/govcon-opportunity-feed) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "title": "Federal Government Contracts: SAM.gov + Grants.gov in one",
+    "version": "0.1.52",
+    "description": "Which government contracts were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nRuns the Apify Actor publicrecords/govcon-opportunity-feed (https://apify.com/publicrecords/govcon-opportunity-feed) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/govcon-opportunity-feed"
@@ -202,7 +202,7 @@
     "/acts/publicrecords~govcon-opportunity-feed/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_govcon_opportunity_feed",
-        "summary": "Run Federal Contract Opportunities: SAM.gov + Grants.gov in one and return results",
+        "summary": "Run Federal Government Contracts: SAM.gov + Grants.gov in one and return results",
         "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
         "parameters": [
           {
@@ -267,7 +267,7 @@
     "/acts/publicrecords~govcon-opportunity-feed/runs": {
       "post": {
         "operationId": "runAsync_govcon_opportunity_feed",
-        "summary": "Start Federal Contract Opportunities: SAM.gov + Grants.gov in one (async)",
+        "summary": "Start Federal Government Contracts: SAM.gov + Grants.gov in one (async)",
         "requestBody": {
           "required": true,
           "content": {

@@ -3,7 +3,7 @@
   "info": {
     "title": "Company Website to LinkedIn & Social Media Links",
     "version": "1.0.0",
-    "description": "Which social profiles belong to this company? LinkedIn platform-verified; X, YouTube, Instagram and Facebook handles found from the site, with evidence.\n\nMore: https://apify.com/publicrecords/company-social-profile-finder"
+    "description": "Which social profiles belong to this company? As of 2026-11-23 the LinkedIn link is found from the company's own site and is not verified against LinkedIn.\n\nMore: https://apify.com/publicrecords/company-social-profile-finder"
   },
   "servers": [
     {

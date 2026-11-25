@@ -85,7 +85,7 @@
           "maxItems": {
             "title": "Max listings per run (0 = no cap)",
             "type": "integer",
-            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs $0.00005 + 20 x $0.004 = $0.08005 (about $0.08) on the Free plan. Raise it (or set 0 for no cap) to get more pages.",
+            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs about 8 cents on the Free plan (20 x 0.4 cents + 0.005 cents start, prices as of Oct 28, 2026; see the Pricing tab). Raise it (or set 0 for no cap) to get more pages.",
             "minimum": 0,
             "default": 20
           },
@@ -103,10 +103,10 @@
             "description": "Etsy renders 12 cards and lazy-loads the rest (48 more on page 1). On, the run fetches them the way Etsy's own page does, so you get the whole page in rank order. Off, you get the 12 rendered cards per page only (faster, fewer requests on your proxy)."
           },
           "is_best_seller": {
-            "title": "Bestsellers only",
+            "title": "Bestseller badge",
             "type": "boolean",
             "default": false,
-            "description": "Only return listings marked Bestseller."
+            "description": "Keeps listings shown with Etsy's Bestseller badge on the search page."
           },
           "is_star_seller": {
             "title": "Star Seller shops only",
@@ -176,12 +176,14 @@
           "shops": {
             "title": "Shop names",
             "type": "array",
-            "description": "Etsy shop names (the part after etsy.com/shop/). Leave empty to use the keyword or category filters."
+            "description": "Etsy shop names (the part after etsy.com/shop/). Leave empty to use the keyword or category filters.",
+            "maxItems": 20000
           },
           "keywords": {
             "title": "Keywords in shop title",
             "type": "array",
-            "description": "Case-insensitive words matched against the shop title and headline."
+            "description": "Case-insensitive words matched against the shop title and headline. At most 5000 keywords (larger lists are refused with a clear message).",
+            "maxItems": 5000
           },
           "category": {
             "title": "Panel category",
@@ -1367,8 +1369,8 @@
     "/acts/publicrecords~etsy-search-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_etsy_search_scraper",
-        "summary": "Run Etsy Scraper \u2014 Listings, Prices & Best Sellers and return results",
-        "description": "Scrape Etsy search results by keyword, category or market page: title, price, rating, reviews, Bestseller and Star Seller badges, ad flag and search rank.",
+        "summary": "Run Etsy Scraper \u2014 Listings, Prices, Best Sellers & Ad Flags and return results",
+        "description": "Etsy scraper for product research: search results by keyword, market page or category URL with price, rating, reviews, Bestseller and Star Seller badges, ad flag, shop and Etsy's rank position. One row per listing. Pay per listing row. Works with Claude.",
         "parameters": [
           {
             "name": "timeout",
@@ -1430,8 +1432,8 @@
     "/acts/publicrecords~etsy-shop-velocity/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_etsy_shop_velocity",
-        "summary": "Run Etsy Shop Sales Tracker & Scraper and return results",
-        "description": "Track Etsy shop sales counters with this Etsy shop scraper: measured sales counts with the date each was read. One row per shop, pay per shop.",
+        "summary": "Run Etsy Shop Daily Sales Tracker & Scraper and return results",
+        "description": "Daily sales for 370,000+ Etsy shops: sales per day, 7-day and 28-day sales and total sales, measured from each shop's public sales counter and dated. One row per shop, pay per shop.",
         "parameters": [
           {
             "name": "timeout",
@@ -1486,8 +1488,8 @@
     "/acts/publicrecords~legistar-meetings-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_legistar_meetings_scraper",
-        "summary": "Run Legistar City Council Minutes & Agendas: meetings, items and return results",
-        "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.",
+        "summary": "Run City Council Meeting Minutes & Agendas Scraper (Legistar) and return results",
+        "description": "City council meeting scraper for Legistar: pull meetings for public Legistar cities by date range, with body, date, agenda and minutes status and links (PDF when posted), optional agenda item titles and the official source link. No login.",
         "parameters": [
           {
             "name": "timeout",
@@ -1609,8 +1611,8 @@
     "/acts/publicrecords~sports-odds-api/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_sports_odds_api",
-        "summary": "Run Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG and return results",
-        "description": "Live odds from 24 Kambi-powered sportsbooks in one call: BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG. One row per game with every book's price and the best price per outcome.",
+        "summary": "Run Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel and return results",
+        "description": "Sports betting odds API: live and pre-game odds from BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG in one call. One row per game with every book's price and the best price per outcome. No API key. Pay per game.",
         "parameters": [
           {
             "name": "timeout",
@@ -1801,8 +1803,8 @@
     "/acts/publicrecords~ashby-jobs-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_ashby_jobs_scraper",
-        "summary": "Run Ashby Jobs Scraper \u2014 New Postings Since Any Date and return results",
-        "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.",
+        "summary": "Run Ashby Jobs Scraper \u2014 New Job Postings Since Any Date and return results",
+        "description": "Scrape Ashby jobs and job postings from any Ashby job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.",
         "parameters": [
           {
             "name": "timeout",
@@ -1860,8 +1862,8 @@
     "/acts/publicrecords~lever-jobs-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_lever_jobs_scraper",
-        "summary": "Run Lever Jobs Scraper \u2014 New Postings Since Any Date and return results",
-        "description": "Scrape open jobs from any Lever job board and return only postings created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.",
+        "summary": "Run Lever Jobs Scraper \u2014 New Job Postings Since Any Date and return results",
+        "description": "Scrape Lever jobs and job postings from any Lever job board, only those created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.",
         "parameters": [
           {
             "name": "timeout",
@@ -1919,8 +1921,8 @@
     "/acts/publicrecords~greenhouse-jobs-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_greenhouse_jobs_scraper",
-        "summary": "Run Greenhouse Jobs Scraper \u2014 New Postings Since Any Date and return results",
-        "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.",
+        "summary": "Run Greenhouse Jobs Scraper \u2014 New Job Postings Since Any Date and return results",
+        "description": "Scrape Greenhouse jobs and job postings from any Greenhouse job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.",
         "parameters": [
           {
             "name": "timeout",
@@ -1978,8 +1980,8 @@
     "/acts/publicrecords~govcon-opportunity-feed/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_govcon_opportunity_feed",
-        "summary": "Run Federal Contract Opportunities: SAM.gov + Grants.gov in one and return results",
-        "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.",
+        "summary": "Run Federal Government Contracts: SAM.gov + Grants.gov in one and return results",
+        "description": "Which government contracts were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.",
         "parameters": [
           {
             "name": "timeout",

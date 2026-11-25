@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Legistar City Council Minutes & Agendas: meetings, items",
+    "title": "City Council Meeting Minutes & Agendas Scraper (Legistar)",
     "version": "1.0.0",
-    "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.\n\nMore: https://apify.com/publicrecords/legistar-meetings-scraper"
+    "description": "City council meeting scraper for Legistar cities: meetings by date range with body, agenda and minutes links, optional agenda item titles and the official source link.\n\nMore: https://apify.com/publicrecords/legistar-meetings-scraper"
   },
   "servers": [
     {
@@ -78,7 +78,7 @@
     "/v1/legistar-meetings-scraper": {
       "post": {
         "operationId": "run_legistar_meetings_scraper",
-        "summary": "Run Legistar City Council Minutes & Agendas: meetings, items",
+        "summary": "Run City Council Meeting Minutes & Agendas Scraper (Legistar)",
         "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
         "parameters": [
           {

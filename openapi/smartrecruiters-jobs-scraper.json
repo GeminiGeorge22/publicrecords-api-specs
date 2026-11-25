@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "SmartRecruiters Jobs Scraper \u2014 New Postings Since Any Date",
-    "version": "0.0.9",
+    "version": "0.0.10",
     "description": "Scrape open jobs from any SmartRecruiters careers site and return only postings released since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/smartrecruiters-jobs-scraper (https://apify.com/publicrecords/smartrecruiters-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",

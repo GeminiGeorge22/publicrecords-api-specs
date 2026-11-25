@@ -2,8 +2,8 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Company Website to LinkedIn & Social Media Links",
-    "version": "1.0.38",
-    "description": "Which social profiles belong to this company? LinkedIn platform-verified; X, YouTube, Instagram and Facebook handles found from the site, with evidence.\n\nRuns the Apify Actor publicrecords/company-social-profile-finder (https://apify.com/publicrecords/company-social-profile-finder) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "version": "1.0.41",
+    "description": "Which social profiles belong to this company? As of 2026-11-23 the LinkedIn link is found from the company's own site and is not verified against LinkedIn.\n\nRuns the Apify Actor publicrecords/company-social-profile-finder (https://apify.com/publicrecords/company-social-profile-finder) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/company-social-profile-finder"

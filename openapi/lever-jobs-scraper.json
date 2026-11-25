@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Lever Jobs Scraper \u2014 New Postings Since Any Date",
-    "version": "0.0.9",
-    "description": "Scrape open jobs from any Lever job board and return only postings created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/lever-jobs-scraper (https://apify.com/publicrecords/lever-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "title": "Lever Jobs Scraper \u2014 New Job Postings Since Any Date",
+    "version": "0.0.10",
+    "description": "Scrape Lever jobs and job postings from any Lever job board, only those created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/lever-jobs-scraper (https://apify.com/publicrecords/lever-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/lever-jobs-scraper"
@@ -92,7 +92,7 @@
     "/acts/publicrecords~lever-jobs-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_lever_jobs_scraper",
-        "summary": "Run Lever Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "summary": "Run Lever Jobs Scraper \u2014 New Job Postings Since Any Date and return results",
         "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
         "parameters": [
           {
@@ -151,7 +151,7 @@
     "/acts/publicrecords~lever-jobs-scraper/runs": {
       "post": {
         "operationId": "runAsync_lever_jobs_scraper",
-        "summary": "Start Lever Jobs Scraper \u2014 New Postings Since Any Date (async)",
+        "summary": "Start Lever Jobs Scraper \u2014 New Job Postings Since Any Date (async)",
         "requestBody": {
           "required": true,
           "content": {

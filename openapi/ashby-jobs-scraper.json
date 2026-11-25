@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Ashby Jobs Scraper \u2014 New Postings Since Any Date",
-    "version": "0.0.11",
-    "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/ashby-jobs-scraper (https://apify.com/publicrecords/ashby-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "title": "Ashby Jobs Scraper \u2014 New Job Postings Since Any Date",
+    "version": "0.0.12",
+    "description": "Scrape Ashby jobs and job postings from any Ashby job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nRuns the Apify Actor publicrecords/ashby-jobs-scraper (https://apify.com/publicrecords/ashby-jobs-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/ashby-jobs-scraper"
@@ -92,7 +92,7 @@
     "/acts/publicrecords~ashby-jobs-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_ashby_jobs_scraper",
-        "summary": "Run Ashby Jobs Scraper \u2014 New Postings Since Any Date and return results",
+        "summary": "Run Ashby Jobs Scraper \u2014 New Job Postings Since Any Date and return results",
         "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
         "parameters": [
           {
@@ -151,7 +151,7 @@
     "/acts/publicrecords~ashby-jobs-scraper/runs": {
       "post": {
         "operationId": "runAsync_ashby_jobs_scraper",
-        "summary": "Start Ashby Jobs Scraper \u2014 New Postings Since Any Date (async)",
+        "summary": "Start Ashby Jobs Scraper \u2014 New Job Postings Since Any Date (async)",
         "requestBody": {
           "required": true,
           "content": {

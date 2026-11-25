@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Calibration Ledger \u2014 trust a forecast, with evidence (beta)",
-    "version": "0.2.26",
+    "version": "0.2.29",
     "description": "Score IMF, OECD, Fed, SPF and issuer claims vs outcomes \u2014 bands, bias, misses, or honest no coverage.\n\nRuns the Apify Actor publicrecords/calibration-ledger (https://apify.com/publicrecords/calibration-ledger) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",

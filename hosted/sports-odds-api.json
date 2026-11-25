@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG",
+    "title": "Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel",
     "version": "1.0.0",
-    "description": "Live sports odds from every open Kambi-powered sportsbook in one call. You get one row per game with each book's price for every outcome and the best price across the books you chose.\n\nMore: https://apify.com/publicrecords/sports-odds-api"
+    "description": "Compare sports betting odds from BetRivers, Unibet, Paf, Svenska Spel and ATG: each book's price per game plus the best price. Not DraftKings or FanDuel.\n\nMore: https://apify.com/publicrecords/sports-odds-api"
   },
   "servers": [
     {
@@ -148,7 +148,7 @@
     "/v1/sports-odds-api": {
       "post": {
         "operationId": "run_sports_odds_api",
-        "summary": "Run Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG",
+        "summary": "Run Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel",
         "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
         "parameters": [
           {

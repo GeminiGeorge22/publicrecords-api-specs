@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Federal Contract Opportunities: SAM.gov + Grants.gov in one",
+    "title": "Federal Government Contracts: SAM.gov + Grants.gov in one",
     "version": "1.0.0",
-    "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nMore: https://apify.com/publicrecords/govcon-opportunity-feed"
+    "description": "Which government contracts were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nMore: https://apify.com/publicrecords/govcon-opportunity-feed"
   },
   "servers": [
     {
@@ -161,7 +161,7 @@
     "/v1/govcon-opportunity-feed": {
       "post": {
         "operationId": "run_govcon_opportunity_feed",
-        "summary": "Run Federal Contract Opportunities: SAM.gov + Grants.gov in one",
+        "summary": "Run Federal Government Contracts: SAM.gov + Grants.gov in one",
         "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
         "parameters": [
           {
