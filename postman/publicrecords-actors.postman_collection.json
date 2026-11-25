@@ -35,8 +35,8 @@
   ],
   "item": [
     {
-      "name": "Etsy Scraper \u2014 Listings, Prices & Best Sellers",
-      "description": "Scrape Etsy search results by keyword, category or market page: title, price, rating, reviews, Bestseller and Star Seller badges, ad flag and search rank.\n\nStore page: https://apify.com/publicrecords/etsy-search-scraper",
+      "name": "Etsy Scraper \u2014 Listings, Prices, Best Sellers & Ad Flags",
+      "description": "Etsy scraper for product research: search results by keyword, market page or category URL with price, rating, reviews, Bestseller and Star Seller badges, ad flag, shop and Etsy's rank position. One row per listing. Pay per listing row. Works with Claude.\n\nStore page: https://apify.com/publicrecords/etsy-search-scraper",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -144,8 +144,8 @@
       ]
     },
     {
-      "name": "Etsy Shop Sales Tracker & Scraper",
-      "description": "Track Etsy shop sales counters with this Etsy shop scraper: measured sales counts with the date each was read. One row per shop, pay per shop.\n\nStore page: https://apify.com/publicrecords/etsy-shop-velocity",
+      "name": "Etsy Shop Daily Sales Tracker & Scraper",
+      "description": "Daily sales for 370,000+ Etsy shops: sales per day, 7-day and 28-day sales and total sales, measured from each shop's public sales counter and dated. One row per shop, pay per shop.\n\nStore page: https://apify.com/publicrecords/etsy-shop-velocity",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -253,8 +253,8 @@
       ]
     },
     {
-      "name": "Legistar City Council Minutes & Agendas: meetings, items",
-      "description": "What did a city council decide? Returns Legistar meetings, agenda items, votes and documents for any city on Legistar, with the source link.\n\nStore page: https://apify.com/publicrecords/legistar-meetings-scraper",
+      "name": "City Council Meeting Minutes & Agendas Scraper (Legistar)",
+      "description": "City council meeting scraper for Legistar: pull meetings for public Legistar cities by date range, with body, date, agenda and minutes status and links (PDF when posted), optional agenda item titles and the official source link. No login.\n\nStore page: https://apify.com/publicrecords/legistar-meetings-scraper",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -471,8 +471,8 @@
       ]
     },
     {
-      "name": "Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG",
-      "description": "Live odds from 24 Kambi-powered sportsbooks in one call: BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG. One row per game with every book's price and the best price per outcome.\n\nStore page: https://apify.com/publicrecords/sports-odds-api",
+      "name": "Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel",
+      "description": "Sports betting odds API: live and pre-game odds from BetRivers (12 US states + Ontario), Unibet (7 countries), Paf, Svenska Spel and ATG in one call. One row per game with every book's price and the best price per outcome. No API key. Pay per game.\n\nStore page: https://apify.com/publicrecords/sports-odds-api",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -798,8 +798,8 @@
       ]
     },
     {
-      "name": "Ashby Jobs Scraper \u2014 New Postings Since Any Date",
-      "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/ashby-jobs-scraper",
+      "name": "Ashby Jobs Scraper \u2014 New Job Postings Since Any Date",
+      "description": "Scrape Ashby jobs and job postings from any Ashby job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/ashby-jobs-scraper",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -907,8 +907,8 @@
       ]
     },
     {
-      "name": "Lever Jobs Scraper \u2014 New Postings Since Any Date",
-      "description": "Scrape open jobs from any Lever job board and return only postings created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/lever-jobs-scraper",
+      "name": "Lever Jobs Scraper \u2014 New Job Postings Since Any Date",
+      "description": "Scrape Lever jobs and job postings from any Lever job board, only those created since a date or window (24h, 7d, 30d). Title, location, team, workplace type, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/lever-jobs-scraper",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -1016,8 +1016,8 @@
       ]
     },
     {
-      "name": "Greenhouse Jobs Scraper \u2014 New Postings Since Any Date",
-      "description": "Scrape open jobs from any Greenhouse job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/greenhouse-jobs-scraper",
+      "name": "Greenhouse Jobs Scraper \u2014 New Job Postings Since Any Date",
+      "description": "Scrape Greenhouse jobs and job postings from any Greenhouse job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, URL, description. Pay per result.\n\nStore page: https://apify.com/publicrecords/greenhouse-jobs-scraper",
       "item": [
         {
           "name": "Run and get results (sync)",
@@ -1125,8 +1125,8 @@
       ]
     },
     {
-      "name": "Federal Contract Opportunities: SAM.gov + Grants.gov in one",
-      "description": "Which federal contract opportunities were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nStore page: https://apify.com/publicrecords/govcon-opportunity-feed",
+      "name": "Federal Government Contracts: SAM.gov + Grants.gov in one",
+      "description": "Which government contracts were posted today? Returns SAM.gov and Grants.gov notices in one feed, new-since-last-run deltas, and source links.\n\nStore page: https://apify.com/publicrecords/govcon-opportunity-feed",
       "item": [
         {
           "name": "Run and get results (sync)",

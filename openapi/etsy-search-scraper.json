@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Etsy Scraper \u2014 Listings, Prices & Best Sellers",
-    "version": "0.2.26",
-    "description": "Scrape Etsy search results: product listings, prices, ratings, reviews, Bestseller badges and shops. Built for product research and competitor pricing.\n\nRuns the Apify Actor publicrecords/etsy-search-scraper (https://apify.com/publicrecords/etsy-search-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "title": "Etsy Scraper \u2014 Listings, Prices, Best Sellers & Ad Flags",
+    "version": "0.2.29",
+    "description": "Etsy scraper for product research: Etsy search results with price, rating, reviews, Bestseller badges, ad flags, shop and rank position per listing.\n\nRuns the Apify Actor publicrecords/etsy-search-scraper (https://apify.com/publicrecords/etsy-search-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/etsy-search-scraper"
@@ -96,7 +96,7 @@
           "maxItems": {
             "title": "Max listings per run (0 = no cap)",
             "type": "integer",
-            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs $0.00005 + 20 x $0.004 = $0.08005 (about $0.08) on the Free plan. Raise it (or set 0 for no cap) to get more pages.",
+            "description": "Stop after this many listing rows across all inputs. Default 20: one keyword on defaults costs about 8 cents on the Free plan (20 x 0.4 cents + 0.005 cents start, prices as of Oct 28, 2026; see the Pricing tab). Raise it (or set 0 for no cap) to get more pages.",
             "minimum": 0,
             "default": 20
           },
@@ -114,10 +114,10 @@
             "description": "Etsy renders 12 cards and lazy-loads the rest (48 more on page 1). On, the run fetches them the way Etsy's own page does, so you get the whole page in rank order. Off, you get the 12 rendered cards per page only (faster, fewer requests on your proxy)."
           },
           "is_best_seller": {
-            "title": "Bestsellers only",
+            "title": "Bestseller badge",
             "type": "boolean",
             "default": false,
-            "description": "Only return listings marked Bestseller."
+            "description": "Keeps listings shown with Etsy's Bestseller badge on the search page."
           },
           "is_star_seller": {
             "title": "Star Seller shops only",
@@ -205,7 +205,7 @@
     "/acts/publicrecords~etsy-search-scraper/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_etsy_search_scraper",
-        "summary": "Run Etsy Scraper \u2014 Listings, Prices & Best Sellers and return results",
+        "summary": "Run Etsy Scraper \u2014 Listings, Prices, Best Sellers & Ad Flags and return results",
         "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
         "parameters": [
           {
@@ -268,7 +268,7 @@
     "/acts/publicrecords~etsy-search-scraper/runs": {
       "post": {
         "operationId": "runAsync_etsy_search_scraper",
-        "summary": "Start Etsy Scraper \u2014 Listings, Prices & Best Sellers (async)",
+        "summary": "Start Etsy Scraper \u2014 Listings, Prices, Best Sellers & Ad Flags (async)",
         "requestBody": {
           "required": true,
           "content": {

@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Find a Tender & Contracts Finder: UK government tenders",
-    "version": "0.0.13",
+    "version": "0.0.14",
     "description": "Which UK government tenders were published today? Returns Find a Tender and Contracts Finder notices with buyer, value, deadline and source link.\n\nRuns the Apify Actor publicrecords/uk-find-a-tender-scraper (https://apify.com/publicrecords/uk-find-a-tender-scraper) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",

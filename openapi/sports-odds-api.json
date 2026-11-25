@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG",
+    "title": "Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel",
     "version": "0.0.3",
-    "description": "Live sports odds from every open Kambi-powered sportsbook in one call. You get one row per game with each book's price for every outcome and the best price across the books you chose.\n\nRuns the Apify Actor publicrecords/sports-odds-api (https://apify.com/publicrecords/sports-odds-api) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
+    "description": "Compare sports betting odds from BetRivers, Unibet, Paf, Svenska Spel and ATG: each book's price per game plus the best price. Not DraftKings or FanDuel.\n\nRuns the Apify Actor publicrecords/sports-odds-api (https://apify.com/publicrecords/sports-odds-api) on the caller's own Apify account. Authenticate with your own Apify API token (Bearer). Billing, if any, is shown on the Store page.",
     "contact": {
       "name": "publicrecords",
       "url": "https://apify.com/publicrecords/sports-odds-api"
@@ -189,7 +189,7 @@
     "/acts/publicrecords~sports-odds-api/run-sync-get-dataset-items": {
       "post": {
         "operationId": "runSync_sports_odds_api",
-        "summary": "Run Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG and return results",
+        "summary": "Run Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel and return results",
         "description": "Starts a run, waits for it to finish (up to 300 s) and returns the dataset items.",
         "parameters": [
           {
@@ -266,7 +266,7 @@
     "/acts/publicrecords~sports-odds-api/runs": {
       "post": {
         "operationId": "runAsync_sports_odds_api",
-        "summary": "Start Sports Odds API: BetRivers, Unibet, Paf, Svenska Spel, ATG (async)",
+        "summary": "Start Sports Betting Odds API: BetRivers, Unibet, Paf, Svenska Spel (async)",
         "requestBody": {
           "required": true,
           "content": {

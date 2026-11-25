@@ -1,9 +1,9 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Ashby Jobs Scraper \u2014 New Postings Since Any Date",
+    "title": "Ashby Jobs Scraper \u2014 New Job Postings Since Any Date",
     "version": "1.0.0",
-    "description": "Scrape open jobs from any Ashby job board and return only postings published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nMore: https://apify.com/publicrecords/ashby-jobs-scraper"
+    "description": "Scrape Ashby jobs and job postings from any Ashby job board, only those published since a date or window (24h, 7d, 30d). Title, location, department, compensation, URL, description. Pay per result.\n\nMore: https://apify.com/publicrecords/ashby-jobs-scraper"
   },
   "servers": [
     {
@@ -51,7 +51,7 @@
     "/v1/ashby-jobs-scraper": {
       "post": {
         "operationId": "run_ashby_jobs_scraper",
-        "summary": "Run Ashby Jobs Scraper \u2014 New Postings Since Any Date",
+        "summary": "Run Ashby Jobs Scraper \u2014 New Job Postings Since Any Date",
         "description": "Runs the job and returns the result rows as JSON (waits up to 280 s).",
         "parameters": [
           {
